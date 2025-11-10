@@ -1,53 +1,67 @@
 body {
-  font-family: "Segoe UI", Arial, sans-serif;
-  background: #f4f6fb;
+  font-family: "Pretendard", "Segoe UI", Arial, sans-serif;
+  background: linear-gradient(135deg, #e0e7ff 0%, #f4f6fb 100%);
+  min-height: 100vh;
   margin: 0;
   padding: 0;
 }
 
 h1 {
   text-align: center;
-  color: #333;
-  margin-top: 40px;
-  margin-bottom: 20px;
+  color: #22223b;
+  margin-top: 48px;
+  margin-bottom: 28px;
+  font-size: 2.5rem;
+  letter-spacing: 2px;
+  font-weight: 700;
 }
 
 #todo-form {
   display: flex;
   justify-content: center;
-  margin-bottom: 30px;
+  margin-bottom: 36px;
+  gap: 0;
 }
 
 #todo-input {
-  width: 250px;
-  padding: 10px;
-  border: 1px solid #bfc8d6;
-  border-radius: 4px 0 0 4px;
-  font-size: 16px;
+  width: 320px;
+  padding: 14px 16px;
+  border: none;
+  border-radius: 8px 0 0 8px;
+  font-size: 1.1rem;
+  background: #f8fafc;
+  color: #22223b;
+  box-shadow: 0 2px 8px rgba(90, 110, 255, 0.07);
   outline: none;
+  transition: box-shadow 0.2s, border 0.2s;
 }
 
 #todo-input:focus {
-  border-color: #5b9df9;
+  box-shadow: 0 2px 12px rgba(90, 110, 255, 0.18);
+  background: #eef2ff;
 }
 
 #todo-form button {
-  padding: 10px 20px;
+  padding: 0 28px;
   border: none;
-  background: #5b9df9;
+  background: linear-gradient(90deg, #5b9df9 60%, #7f53ff 100%);
   color: #fff;
-  font-size: 16px;
-  border-radius: 0 4px 4px 0;
+  font-size: 1.1rem;
+  border-radius: 0 8px 8px 0;
   cursor: pointer;
-  transition: background 0.2s;
+  font-weight: 600;
+  letter-spacing: 1px;
+  transition: background 0.2s, box-shadow 0.2s;
+  box-shadow: 0 2px 8px rgba(90, 110, 255, 0.07);
 }
 
 #todo-form button:hover {
-  background: #357ae8;
+  background: linear-gradient(90deg, #357ae8 60%, #5b9df9 100%);
+  box-shadow: 0 4px 16px rgba(90, 110, 255, 0.13);
 }
 
 #todo-list {
-  max-width: 400px;
+  max-width: 440px;
   margin: 0 auto;
   padding: 0;
   list-style: none;
@@ -55,43 +69,198 @@ h1 {
 
 #todo-list li {
   background: #fff;
-  margin-bottom: 10px;
-  padding: 12px 18px;
-  border-radius: 4px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
-  font-size: 16px;
-  color: #444;
+  margin-bottom: 16px;
+  padding: 18px 22px;
+  border-radius: 10px;
+  box-shadow: 0 2px 12px rgba(90, 110, 255, 0.08);
+  font-size: 1.08rem;
+  color: #22223b;
   display: flex;
   align-items: center;
   justify-content: space-between;
+  transition: box-shadow 0.2s, transform 0.2s;
+  position: relative;
+  gap: 10px;
 }
 
 #todo-list li:last-child {
   margin-bottom: 0;
 }
 
+#todo-list li:hover {
+  box-shadow: 0 6px 24px rgba(90, 110, 255, 0.13);
+  transform: translateY(-2px) scale(1.01);
+}
+
+#todo-list li span {
+  flex: 1;
+  word-break: break-all;
+}
+
 #todo-list li button {
   background: #f1f3f5;
   color: #555;
   border: none;
-  border-radius: 4px;
-  padding: 5px 8px;
-  font-size: 12px;
+  border-radius: 6px;
+  padding: 7px 14px;
+  font-size: 0.98rem;
   cursor: pointer;
-  margin-left: 5px;
-  transition: background 0.2s;
+  margin-left: 8px;
+  font-weight: 500;
+  transition: background 0.2s, color 0.2s;
+  box-shadow: 0 1px 3px rgba(90, 110, 255, 0.04);
 }
 
 #todo-list li button:hover {
   background: #e9ecef;
+  color: #5b9df9;
 }
 
-/* 삭제 버튼은 조금 다르게 스타일링 */
+#todo-list li input[type="checkbox"] {
+  accent-color: #5b9df9;
+  width: 20px;
+  height: 20px;
+  margin-right: 12px;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+/* 완료된 항목 스타일 */
+#todo-list li.completed span {
+  text-decoration: line-through;
+  color: #b0b0b0;
+  opacity: 0.7;
+}
+
+/* 수정 버튼 */
+#completed-list li button:first-of-type,
+#todo-list li button:first-of-type {
+  background: #e0e7ff;
+  color: #5b9df9;
+}
+
+#completed-list li button:first-of-type:hover,
+#todo-list li button:first-of-type:hover {
+  background: #c7d2fe;
+  color: #7f53ff;
+}
+
+/* 삭제 버튼은 조금 더 강조 */
+#completed-list li button:last-child,
 #todo-list li button:last-child {
-  background: #ffc9c9;
-  color: #c92a2a;
+  background: #ffe0e0;
+  color: #e03131;
 }
 
-#todo-list li button:last-child:hover {
-  background: #ffa8a8;
+#todo-list li button:last-child:hover,
+#completed-list li button:last-child:hover {
+  background: #ffc9c9;
+  color: #a61e4d;
+}
+
+#completed-list {
+  max-width: 440px;
+  margin: 0 auto 40px auto;
+  padding: 0;
+  list-style: none;
+}
+
+/* 반응형 */
+@media (max-width: 600px) {
+  #todo-input {
+    width: 100%;
+    min-width: 0;
+  }
+  #todo-list {
+    max-width: 98vw;
+  }
+  #todo-form {
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+  }
+  #todo-form button {
+    border-radius: 8px;
+    width: 100%;
+    padding: 12px 0;
+  }
+}
+#toggle-completed-btn {
+  display: block;
+  margin: 24px auto 0 auto;
+  font-size: 1.1rem;
+  padding: 8px 18px;
+  border-radius: 8px;
+  cursor: pointer;
+  background: #eef2ff;
+  color: #5b9df9;
+  border: none;
+  font-weight: 600;
+  transition: background 0.2s, color 0.2s;
+  margin-bottom: 20px;
+}
+#completed-list {
+  max-width: 440px;
+  margin: 0 auto 40px auto;
+  padding: 0;
+  list-style: none;
+}
+
+/* 완료된 리스트 항목도 미완료와 동일하게 */
+#completed-list li {
+  background: #fff;
+  margin-bottom: 16px;
+  padding: 18px 22px;
+  border-radius: 10px;
+  box-shadow: 0 2px 12px rgba(90, 110, 255, 0.08);
+  font-size: 1.08rem;
+  color: #22223b;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  transition: box-shadow 0.2s, transform 0.2s;
+  position: relative;
+  gap: 10px;
+}
+
+#completed-list li:last-child {
+  margin-bottom: 0;
+}
+
+#completed-list li:hover {
+  box-shadow: 0 6px 24px rgba(90, 110, 255, 0.13);
+  transform: translateY(-2px) scale(1.01);
+}
+
+#completed-list li span {
+  flex: 1;
+  word-break: break-all;
+}
+
+#completed-list li button {
+  background: #f1f3f5;
+  color: #555;
+  border: none;
+  border-radius: 6px;
+  padding: 7px 14px;
+  font-size: 0.98rem;
+  cursor: pointer;
+  margin-left: 8px;
+  font-weight: 500;
+  transition: background 0.2s, color 0.2s;
+  box-shadow: 0 1px 3px rgba(90, 110, 255, 0.04);
+}
+
+#completed-list li button:hover {
+  background: #e9ecef;
+  color: #5b9df9;
+}
+
+#completed-list li input[type="checkbox"] {
+  accent-color: #5b9df9;
+  width: 20px;
+  height: 20px;
+  margin-right: 12px;
+  cursor: pointer;
+  flex-shrink: 0;
 }
