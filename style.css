@@ -69,3 +69,29 @@ h1 {
 #todo-list li:last-child {
   margin-bottom: 0;
 }
+
+#todo-list li button {
+  background: #f1f3f5;
+  color: #555;
+  border: none;
+  border-radius: 4px;
+  padding: 5px 8px;
+  font-size: 12px;
+  cursor: pointer;
+  margin-left: 5px;
+  transition: background 0.2s;
+}
+
+#todo-list li button:hover {
+  background: #e9ecef;
+}
+
+/* 삭제 버튼은 조금 다르게 스타일링 */
+#todo-list li button:last-child {
+  background: #ffc9c9;
+  color: #c92a2a;
+}
+
+#todo-list li button:last-child:hover {
+  background: #ffa8a8;
+}
