@@ -10,6 +10,16 @@
     <h1>ToDo List</h1>
 
     <div class="main-container">
+      <div class="calendar-wrapper">
+        <div class="calendar-header">
+          <button id="prev-month">&lt;</button>
+          <span id="current-month-year"></span>
+          <button id="next-month">&gt;</button>
+        </div>
+        <div id="calendar-dates" class="calendar-dates"></div>
+        <div id="selected-date-todos" class="selected-date-todos"></div>
+      </div>
+
       <div class="todo-wrapper">
         <form id="todo-form">
           <input
@@ -42,23 +52,16 @@
         <ul id="trash-list" style="display: none"></ul>
       </div>
 
-      <div class="calendar-wrapper">
-        <div class="calendar-header">
-          <button id="prev-month">&lt;</button>
-          <span id="current-month-year"></span>
-          <button id="next-month">&gt;</button>
+      <div class="memo-wrapper">
+        <h2 id="memo-title">메모</h2>
+        <p id="memo-guide">할 일을 선택하면 메모를 작성할 수 있습니다.</p>
+        <div id="memo-content" style="display: none">
+          <textarea
+            id="memo-textarea"
+            placeholder="메모를 입력하세요..."
+          ></textarea>
+          <button id="save-memo-btn">저장</button>
         </div>
-        <div class="calendar-weekdays">
-          <div>일</div>
-          <div>월</div>
-          <div>화</div>
-          <div>수</div>
-          <div>목</div>
-          <div>금</div>
-          <div>토</div>
-        </div>
-        <div id="calendar-dates" class="calendar-dates"></div>
-        <div id="selected-date-todos" class="selected-date-todos"></div>
       </div>
     </div>
 

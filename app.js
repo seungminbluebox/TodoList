@@ -15,7 +15,7 @@ const DARK_MODE_KEY = "darkMode";
 const TODOS_KEY = "todos";
 const TRASH_KEY = "trash";
 
-// 'let'으로 변경 (데이터 삭제 시 교체해야 하므로)
+// (데이터 삭제 시 교체해야 하므로)
 let toDos = [];
 let deletedToDos = [];
 
@@ -113,6 +113,11 @@ function paintTodo(newTodoObject, targetUl) {
 
   li.appendChild(checkbox);
   li.appendChild(span);
+
+  // 할 일 클릭 시 메모 기능 활성화 (체크박스, 버튼 제외)
+  span.addEventListener("click", () => {
+    handleTodoClick(newTodoObject.id);
+  });
 
   if (newTodoObject.date) {
     const dateSpan = document.createElement("span");
@@ -241,6 +246,7 @@ function handleToDoSubmit(event) {
     date: newTodoDate,
     id: Date.now(), // 현재 시간을 고유 ID로 사용
     completed: false, // 기본값: 미완료
+    memo: "", // 메모 초기화
   };
 
   toDos.push(newTodoObject); // 배열에 객체 추가
@@ -461,6 +467,49 @@ const selectedDateTodos = document.getElementById("selected-date-todos");
 
 let currentDate = new Date();
 
+// 메모 관련 요소
+const memoContent = document.getElementById("memo-content");
+const memoTextarea = document.getElementById("memo-textarea");
+const saveMemoBtn = document.getElementById("save-memo-btn");
+const memoGuide = document.getElementById("memo-guide");
+const memoTitle = document.getElementById("memo-title");
+
+let currentSelectedTodoId = null;
+
+// 할 일 클릭 시 메모 섹션 표시
+function handleTodoClick(todoId) {
+  currentSelectedTodoId = todoId;
+  const todo = toDos.find((t) => t.id === todoId);
+
+  if (!todo) return;
+
+  // 선택된 스타일 적용
+  const allLis = document.querySelectorAll("#todo-list li");
+  allLis.forEach((li) => li.classList.remove("selected"));
+  const selectedLi = document.getElementById(todoId);
+  if (selectedLi) selectedLi.classList.add("selected");
+
+  // 메모 섹션 업데이트
+  memoTitle.innerText = `메모: ${todo.text}`;
+  memoGuide.style.display = "none";
+  memoContent.style.display = "block";
+  memoTextarea.value = todo.memo || "";
+}
+
+// 메모 저장
+if (saveMemoBtn) {
+  saveMemoBtn.addEventListener("click", () => {
+    if (currentSelectedTodoId === null) return;
+
+    const todo = toDos.find((t) => t.id === currentSelectedTodoId);
+    if (todo) {
+      todo.memo = memoTextarea.value;
+      saveToDos();
+      alert("메모가 저장되었습니다.");
+    }
+  });
+}
+
 function renderCalendar() {
   if (!calendarDates) return;
 
@@ -479,7 +528,7 @@ function renderCalendar() {
 
   // 날짜 초기화
   calendarDates.innerHTML = "";
-  // 선택된 날짜 할 일 목록 초기화 (달이 바뀌면 초기화하거나 유지할 수 있음, 여기선 초기화)
+  // 선택된 날짜 할 일 목록 초기화 (달이 바뀌면 초기화하거나 유지할 수 있음, 여기서는 초기화)
   if (selectedDateTodos) selectedDateTodos.innerHTML = "";
 
   // 지난 달 날짜 채우기
