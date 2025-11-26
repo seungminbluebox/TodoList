@@ -3,15 +3,20 @@ const todoInput = document.getElementById("todo-input");
 const todoList = document.getElementById("todo-list");
 const completedList = document.getElementById("completed-list");
 const toggleCompletedBtn = document.getElementById("toggle-completed-btn");
+const trashList = document.getElementById("trash-list");
+const toggleTrashBtn = document.getElementById("toggle-trash-btn");
 
 const TODOS_KEY = "todos";
+const TRASH_KEY = "trash";
 
 // 'let'으로 변경 (데이터 삭제 시 교체해야 하므로)
 let toDos = [];
+let deletedToDos = [];
 
 // REQ-101, REQ-103: localStorage에 저장 (JSON 직렬화)
 function saveToDos() {
   localStorage.setItem(TODOS_KEY, JSON.stringify(toDos));
+  localStorage.setItem(TRASH_KEY, JSON.stringify(deletedToDos));
 }
 
 // 리스트를 다시 그리는 함수 (분류 및 정렬)
@@ -69,18 +74,56 @@ function paintTodo(newTodoObject, targetUl) {
   targetUl.appendChild(li);
 }
 
-// REQ-204 (삭제): 삭제 버튼 클릭 시 실행
+// REQ-204 (삭제): 삭제 버튼 클릭 시 실행 -> 휴지통으로 이동
 function handleDeleteTodo(event) {
   const li = event.target.parentElement;
-  // 삭제 전 확인
-  if (!window.confirm("정말 삭제하시겠습니까?")) return;
+  const todoId = parseInt(li.id);
 
-  // 1. toDos 배열에서 데이터 삭제
-  toDos = toDos.filter((todo) => todo.id !== parseInt(li.id));
-  // 2. 변경된 배열을 localStorage에 저장
+  // 삭제 전 확인
+  if (!window.confirm("휴지통으로 이동하시겠습니까?")) return;
+
+  // 1. 삭제할 객체 찾기
+  const todoToDelete = toDos.find((todo) => todo.id === todoId);
+
+  if (todoToDelete) {
+    // 2. toDos 배열에서 제거
+    toDos = toDos.filter((todo) => todo.id !== todoId);
+    // 3. deletedToDos 배열에 추가
+    deletedToDos.push(todoToDelete);
+
+    // 4. 저장 및 다시 그리기
+    saveToDos();
+    renderTodos();
+    renderTrash();
+  }
+}
+
+// 휴지통 복구
+function handleRestoreTodo(event) {
+  const li = event.target.parentElement;
+  const todoId = parseInt(li.id);
+
+  const todoToRestore = deletedToDos.find((todo) => todo.id === todoId);
+  if (todoToRestore) {
+    deletedToDos = deletedToDos.filter((todo) => todo.id !== todoId);
+    toDos.push(todoToRestore);
+    saveToDos();
+    renderTodos();
+    renderTrash();
+  }
+}
+
+// 휴지통 영구 삭제
+function handlePermanentDelete(event) {
+  const li = event.target.parentElement;
+  const todoId = parseInt(li.id);
+
+  if (!window.confirm("정말 영구 삭제하시겠습니까? 복구할 수 없습니다."))
+    return;
+
+  deletedToDos = deletedToDos.filter((todo) => todo.id !== todoId);
   saveToDos();
-  // 3. 리스트 다시 그림
-  renderTodos();
+  renderTrash();
 }
 
 // REQ-205: 완료 토글
@@ -144,12 +187,18 @@ todoForm.addEventListener("submit", handleToDoSubmit);
 
 // REQ-102, REQ-103: 페이지 로드 시 데이터 복원
 const savedToDos = localStorage.getItem(TODOS_KEY);
+const savedTrash = localStorage.getItem(TRASH_KEY);
 
 if (savedToDos !== null) {
   const parsedToDos = JSON.parse(savedToDos);
   toDos = parsedToDos; // toDos 배열 복원
   // REQ-202 (조회): 저장된 모든 항목을 화면에 그림
   renderTodos();
+}
+
+if (savedTrash !== null) {
+  deletedToDos = JSON.parse(savedTrash);
+  renderTrash();
 }
 
 // 완료된 todo 토글 버튼
@@ -161,4 +210,70 @@ if (toggleCompletedBtn && completedList) {
       ? "▼ 완료된 할 일 숨기기"
       : "▶ 완료된 할 일 보기";
   });
+}
+
+// 휴지통 토글 버튼
+if (toggleTrashBtn && trashList) {
+  toggleTrashBtn.addEventListener("click", () => {
+    const isHidden = trashList.style.display === "none";
+    trashList.style.display = isHidden ? "" : "none";
+    toggleTrashBtn.innerText = isHidden ? "🗑 휴지통 숨기기" : "🗑 휴지통 보기";
+  });
+}
+
+// 휴지통 리스트 그리기
+function renderTrash() {
+  trashList.innerHTML = "";
+  deletedToDos.forEach((todo) => {
+    const li = document.createElement("li");
+    li.id = todo.id;
+
+    const span = document.createElement("span");
+    span.innerText = todo.text;
+
+    const restoreButton = document.createElement("button");
+    restoreButton.innerText = "복구";
+    restoreButton.addEventListener("click", handleRestoreTodo);
+
+    const permDeleteButton = document.createElement("button");
+    permDeleteButton.innerText = "영구 삭제";
+    permDeleteButton.addEventListener("click", handlePermanentDelete);
+
+    li.appendChild(span);
+    li.appendChild(restoreButton);
+    li.appendChild(permDeleteButton);
+
+    trashList.appendChild(li);
+  });
+}
+
+// 복구 버튼 클릭 시 실행
+function handleRestoreTodo(event) {
+  const li = event.target.parentElement;
+  const todoId = parseInt(li.id);
+
+  const todoToRestore = deletedToDos.find((todo) => todo.id === todoId);
+  if (todoToRestore) {
+    deletedToDos = deletedToDos.filter((todo) => todo.id !== todoId);
+    toDos.push(todoToRestore);
+    saveToDos();
+    renderTodos();
+    renderTrash();
+  }
+}
+
+// 영구 삭제 버튼 클릭 시 실행
+function handlePermanentDelete(event) {
+  const li = event.target.parentElement;
+  const todoId = parseInt(li.id);
+
+  // 삭제 전 확인
+  if (!window.confirm("정말 영구 삭제하시겠습니까?")) return;
+
+  // 1. deletedToDos 배열에서 데이터 삭제
+  deletedToDos = deletedToDos.filter((todo) => todo.id !== todoId);
+
+  // 2. 변경된 배열을 localStorage에 저장
+  saveToDos();
+  renderTrash();
 }
