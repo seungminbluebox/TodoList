@@ -341,6 +341,17 @@ body.dark-mode .calendar-date.selected {
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
 }
 
+/* 드래그 오버 효과 */
+.calendar-date.drag-over {
+  background-color: #eef2ff;
+  border: 2px dashed #5b9df9;
+}
+
+body.dark-mode .calendar-date.drag-over {
+  background-color: #32324a;
+  border-color: #8ab4f8;
+}
+
 body.dark-mode .calendar-date.has-todo {
   background-color: rgba(138, 180, 248, 0.15);
   color: #fff;

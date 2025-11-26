@@ -560,6 +560,41 @@ function renderCalendar() {
       i
     ).padStart(2, "0")}`;
 
+    // 드래그 앤 드롭 이벤트 추가 (날짜에 드롭 시 기한 변경)
+    dateDiv.addEventListener("dragover", (e) => {
+      e.preventDefault();
+      dateDiv.classList.add("drag-over");
+    });
+
+    dateDiv.addEventListener("dragleave", () => {
+      dateDiv.classList.remove("drag-over");
+    });
+
+    dateDiv.addEventListener("drop", (e) => {
+      e.preventDefault();
+      dateDiv.classList.remove("drag-over");
+
+      const draggingLi = document.querySelector(".dragging");
+      if (draggingLi) {
+        const todoId = parseInt(draggingLi.id);
+        const todo = toDos.find((t) => t.id === todoId);
+        if (todo) {
+          if (
+            confirm(
+              `'${todo.text}'의 기한을 ${year}년 ${
+                month + 1
+              }월 ${i}일로 변경하시겠습니까?`
+            )
+          ) {
+            todo.date = dateString;
+            saveToDos();
+            renderTodos();
+            renderCalendar();
+          }
+        }
+      }
+    });
+
     // 미완료된 할 일 중 해당 날짜인 것 확인
     const hasTodo = toDos.some(
       (todo) => !todo.completed && todo.date === dateString
