@@ -24,7 +24,7 @@ h1 {
 }
 
 #todo-input {
-  width: 320px;
+  width: 260px;
   padding: 14px 16px;
   border: none;
   border-radius: 8px 0 0 8px;
@@ -34,6 +34,22 @@ h1 {
   box-shadow: 0 2px 8px rgba(90, 110, 255, 0.07);
   outline: none;
   transition: box-shadow 0.2s, border 0.2s;
+}
+
+#todo-date {
+  padding: 14px 10px;
+  border: none;
+  border-left: 1px solid #e0e7ff;
+  font-size: 1rem;
+  background: #f8fafc;
+  color: #22223b;
+  outline: none;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+#todo-date:focus {
+  background: #eef2ff;
 }
 
 #todo-input:focus {
@@ -53,6 +69,8 @@ h1 {
   letter-spacing: 1px;
   transition: background 0.2s, box-shadow 0.2s;
   box-shadow: 0 2px 8px rgba(90, 110, 255, 0.07);
+  white-space: nowrap;
+  flex-shrink: 0;
 }
 
 #todo-form button:hover {
@@ -165,26 +183,197 @@ h1 {
   list-style: none;
 }
 
-/* 반응형 */
-@media (max-width: 600px) {
-  #todo-input {
-    width: 100%;
-    min-width: 0;
-  }
-  #todo-list {
-    max-width: 98vw;
-  }
-  #todo-form {
+/* 메인 레이아웃 */
+.main-container {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 40px;
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 40px;
+}
+
+.calendar-wrapper {
+  width: 320px;
+  background: #fff;
+  border-radius: 16px;
+  padding: 20px;
+  box-shadow: 0 4px 20px rgba(90, 110, 255, 0.08);
+  flex-shrink: 0;
+}
+
+.todo-wrapper {
+  flex: 1;
+  min-width: 360px;
+  max-width: 480px;
+}
+
+.memo-wrapper {
+  width: 300px;
+  background: #fff;
+  border-radius: 16px;
+  padding: 20px;
+  box-shadow: 0 4px 20px rgba(90, 110, 255, 0.08);
+  flex-shrink: 0;
+  position: sticky;
+  top: 20px;
+  min-height: 300px;
+}
+
+/* 캘린더 스타일 */
+.calendar-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+#current-month-year {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #22223b;
+}
+
+.calendar-header button {
+  background: none;
+  border: none;
+  font-size: 1.2rem;
+  cursor: pointer;
+  color: #5b9df9;
+  padding: 4px 8px;
+  border-radius: 4px;
+  transition: background 0.2s;
+}
+
+.calendar-header button:hover {
+  background: #eef2ff;
+}
+
+.calendar-weekdays {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  text-align: center;
+  font-weight: 600;
+  color: #888;
+  margin-bottom: 10px;
+  font-size: 0.9rem;
+}
+
+.calendar-dates {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 4px;
+}
+
+.calendar-date {
+  aspect-ratio: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.95rem;
+  cursor: pointer; /* 커서를 포인터로 변경하여 클릭 가능함을 표시 */
+  border-radius: 8px;
+  position: relative;
+  color: #333;
+}
+
+.calendar-date:hover {
+  background-color: #f0f0f0; /* 호버 효과 추가 */
+}
+
+body.dark-mode .calendar-date {
+  color: #ccc;
+}
+
+body.dark-mode .calendar-date.today {
+  background: #32324a;
+  color: #8ab4f8;
+}
+
+body.dark-mode .calendar-date.other-month {
+  color: #555;
+}
+
+/* 다크모드 캘린더 */
+body.dark-mode .calendar-wrapper {
+  background: #2a2a40;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+}
+
+body.dark-mode #current-month-year {
+  color: #e0e0e0;
+}
+
+body.dark-mode .calendar-date {
+  cursor: pointer; /* 커서를 포인터로 변경하여 클릭 가능함을 표시 */
+}
+
+body.dark-mode .calendar-date:hover {
+  background-color: #3a3a55;
+}
+
+.calendar-date.selected {
+  background: #e0e7ff;
+  border: 2px solid #5b9df9;
+}
+
+body.dark-mode .calendar-date.selected {
+  background: #32324a;
+  border-color: #8ab4f8;
+}
+
+/* 할 일이 있는 날짜 표시 */
+.calendar-date.has-todo {
+  background-color: rgba(91, 157, 249, 0.08);
+  font-weight: 600;
+}
+
+.calendar-date.has-todo::after {
+  content: "";
+  width: 6px;
+  height: 6px;
+  background: #ff6b6b;
+  border-radius: 50%;
+  position: absolute;
+  bottom: 6px;
+  left: 50%;
+  transform: translateX(-50%);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+/* 드래그 오버 효과 */
+.calendar-date.drag-over {
+  background-color: #eef2ff;
+  border: 2px dashed #5b9df9;
+}
+
+body.dark-mode .calendar-date.drag-over {
+  background-color: #32324a;
+  border-color: #8ab4f8;
+}
+
+body.dark-mode .calendar-date.has-todo {
+  background-color: rgba(138, 180, 248, 0.15);
+  color: #fff;
+}
+
+/* 반응형: 화면이 좁아지면 세로 배치 */
+@media (max-width: 950px) {
+  .main-container {
     flex-direction: column;
     align-items: center;
-    gap: 10px;
   }
-  #todo-form button {
-    border-radius: 8px;
+
+  .calendar-wrapper {
     width: 100%;
-    padding: 12px 0;
+    max-width: 440px;
+    margin-bottom: 40px;
+    order: -1; /* 캘린더를 위로 올리고 싶으면 사용, 아니면 제거 */
   }
 }
+
 #toggle-completed-btn {
   display: block;
   margin: 24px auto 0 auto;
@@ -263,4 +452,455 @@ h1 {
   margin-right: 12px;
   cursor: pointer;
   flex-shrink: 0;
+}
+
+#toggle-trash-btn {
+  display: block;
+  margin: 10px auto 0 auto;
+  font-size: 1.1rem;
+  padding: 8px 18px;
+  border-radius: 8px;
+  cursor: pointer;
+  background: #ffe3e3;
+  color: #e03131;
+  border: none;
+  font-weight: 600;
+  transition: background 0.2s, color 0.2s;
+  margin-bottom: 20px;
+}
+
+#toggle-trash-btn:hover {
+  background: #ffc9c9;
+  color: #c92a2a;
+}
+
+#trash-list {
+  max-width: 440px;
+  margin: 0 auto 40px auto;
+  padding: 0;
+  list-style: none;
+}
+
+#trash-list li {
+  background: #fff0f0;
+  margin-bottom: 16px;
+  padding: 18px 22px;
+  border-radius: 10px;
+  box-shadow: 0 2px 12px rgba(255, 0, 0, 0.05);
+  font-size: 1.08rem;
+  color: #495057;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  transition: box-shadow 0.2s, transform 0.2s;
+  position: relative;
+  gap: 10px;
+}
+
+#trash-list li:hover {
+  box-shadow: 0 6px 24px rgba(255, 0, 0, 0.1);
+  transform: translateY(-2px) scale(1.01);
+}
+
+#trash-list li span {
+  flex: 1;
+  word-break: break-all;
+  text-decoration: line-through;
+  color: #868e96;
+}
+
+/* 복구 버튼 */
+#trash-list li button:first-of-type {
+  background: #d3f9d8;
+  color: #2b8a3e;
+  border: none;
+  border-radius: 6px;
+  padding: 7px 14px;
+  font-size: 0.98rem;
+  cursor: pointer;
+  font-weight: 500;
+  transition: background 0.2s;
+}
+
+#trash-list li button:first-of-type:hover {
+  background: #b2f2bb;
+}
+
+/* 영구 삭제 버튼 */
+#trash-list li button:last-child {
+  background: #ffc9c9;
+  color: #c92a2a;
+  border: none;
+  border-radius: 6px;
+  padding: 7px 14px;
+  font-size: 0.98rem;
+  cursor: pointer;
+  font-weight: 500;
+  transition: background 0.2s;
+  margin-left: 8px;
+}
+
+#trash-list li button:last-child:hover {
+  background: #ffa8a8;
+}
+
+/* 다크 모드 토글 버튼 */
+#dark-mode-toggle {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+  padding: 8px;
+  border-radius: 50%;
+  transition: background 0.2s;
+}
+
+#dark-mode-toggle:hover {
+  background: rgba(0, 0, 0, 0.05);
+}
+
+/* 다크 모드 스타일 */
+body.dark-mode {
+  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+  color: #e0e0e0;
+}
+
+body.dark-mode h1 {
+  color: #e0e0e0;
+}
+
+body.dark-mode #dark-mode-toggle:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+body.dark-mode #todo-input {
+  background: #2a2a40;
+  color: #e0e0e0;
+  box-shadow: none;
+}
+
+body.dark-mode #todo-input:focus {
+  background: #32324a;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.3);
+}
+
+body.dark-mode #todo-list li,
+body.dark-mode #completed-list li {
+  background: #2a2a40;
+  color: #e0e0e0;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.2);
+}
+
+body.dark-mode #todo-list li:hover,
+body.dark-mode #completed-list li:hover {
+  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.3);
+}
+
+body.dark-mode #todo-list li button,
+body.dark-mode #completed-list li button {
+  background: #3a3a55;
+  color: #ccc;
+}
+
+body.dark-mode #todo-list li button:hover,
+body.dark-mode #completed-list li button:hover {
+  background: #4a4a6a;
+  color: #fff;
+}
+
+/* 다크모드에서 완료된 항목 */
+body.dark-mode #todo-list li.completed span,
+body.dark_mode #completed-list li span {
+  color: #666;
+}
+
+/* 다크모드 토글 버튼들 (완료/휴지통 보기) */
+body.dark-mode #toggle-completed-btn,
+body.dark-mode #toggle-trash-btn {
+  background: #2a2a40;
+  color: #8ab4f8;
+}
+
+body.dark-mode #toggle-completed-btn:hover,
+body.dark-mode #toggle-trash-btn:hover {
+  background: #32324a;
+}
+
+/* 다크모드 휴지통 */
+body.dark-mode #trash-list li {
+  background: #3e2a2a;
+  color: #e0e0e0;
+}
+
+body.dark-mode #trash-list li span {
+  color: #a0a0a0;
+}
+
+body.dark-mode #trash-list li button:first-of-type {
+  background: #1b4d2e;
+  color: #a3cfbb;
+}
+
+body.dark-mode #trash-list li button:first-of-type:hover {
+  background: #2b6a40;
+}
+
+body.dark-mode #trash-list li button:last-child {
+  background: #5c2b2b;
+  color: #ffc9c9;
+}
+
+body.dark-mode #trash-list li button:last-child:hover {
+  background: #7a3b3b;
+}
+
+.todo-date {
+  font-size: 0.85rem;
+  color: #666;
+  margin-right: 10px;
+  background: #f1f3f5;
+  padding: 4px 8px;
+  border-radius: 4px;
+  white-space: nowrap;
+}
+
+/* 다크모드 날짜 입력 및 표시 */
+body.dark-mode #todo-date {
+  background: #2a2a40;
+  color: #e0e0e0;
+  border-left: 1px solid #444;
+}
+
+body.dark-mode #todo-date:focus {
+  background: #32324a;
+}
+
+body.dark-mode .todo-date {
+  background: #3a3a55;
+  color: #ccc;
+}
+
+#sort-wrapper {
+  max-width: 440px;
+  margin: 0 auto 16px auto;
+  display: flex;
+  justify-content: flex-end;
+}
+
+#sort-select {
+  padding: 8px 12px;
+  border: 1px solid #e0e7ff;
+  border-radius: 8px;
+  background: #fff;
+  color: #555;
+  font-size: 0.95rem;
+  cursor: pointer;
+  outline: none;
+  transition: border 0.2s, box-shadow 0.2s;
+}
+
+#sort-select:hover {
+  border-color: #5b9df9;
+}
+
+#sort-select:focus {
+  border-color: #5b9df9;
+  box-shadow: 0 0 0 3px rgba(91, 157, 249, 0.1);
+}
+
+/* 다크모드 정렬 드롭다운 */
+body.dark-mode #sort-select {
+  background: #2a2a40;
+  color: #e0e0e0;
+  border-color: #444;
+}
+
+body.dark-mode #sort-select:hover {
+  border-color: #8ab4f8;
+}
+
+body.dark-mode #sort-select:focus {
+  border-color: #8ab4f8;
+  box-shadow: 0 0 0 3px rgba(138, 180, 248, 0.1);
+}
+
+/* 드래그 앤 드롭 스타일 */
+.draggable {
+  cursor: move;
+}
+
+.dragging {
+  opacity: 0.5;
+  background: #eef2ff;
+  border: 2px dashed #5b9df9;
+}
+
+body.dark-mode .dragging {
+  background: #32324a;
+  border-color: #8ab4f8;
+}
+
+/* 캘린더 하단 선택된 날짜 할 일 목록 */
+.selected-date-todos {
+  margin-top: 20px;
+  padding-top: 20px;
+  border-top: 1px solid #eee;
+  min-height: 50px;
+}
+
+.selected-date-todos h3 {
+  font-size: 1rem;
+  color: #22223b;
+  margin: 0 0 12px 0;
+}
+
+.selected-date-todos ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.selected-date-todos li {
+  padding: 8px 0;
+  border-bottom: 1px solid #f1f3f5;
+  font-size: 0.95rem;
+  color: #555;
+  display: flex;
+  align-items: center;
+}
+
+.selected-date-todos li::before {
+  content: "•";
+  color: #5b9df9;
+  margin-right: 8px;
+  font-weight: bold;
+}
+
+.selected-date-todos li:last-child {
+  border-bottom: none;
+}
+
+.selected-date-todos .empty-message {
+  color: #aaa;
+  font-size: 0.9rem;
+  text-align: center;
+  padding: 10px 0;
+}
+
+/* 다크모드 */
+body.dark-mode .selected-date-todos {
+  border-top-color: #444;
+}
+
+body.dark-mode .selected-date-todos h3 {
+  color: #e0e0e0;
+}
+
+body.dark-mode .selected-date-todos li {
+  border-bottom-color: #3a3a55;
+  color: #ccc;
+}
+
+body.dark-mode .selected-date-todos .empty-message {
+  color: #666;
+}
+
+/* 메모 섹션 스타일 */
+.memo-wrapper h2 {
+  font-size: 1.2rem;
+  color: #22223b;
+  margin: 0 0 16px 0;
+  text-align: left;
+}
+
+#memo-guide {
+  color: #888;
+  font-size: 0.95rem;
+  line-height: 1.5;
+}
+
+#memo-textarea {
+  width: 100%;
+  height: 200px;
+  padding: 12px;
+  border: 1px solid #e0e7ff;
+  border-radius: 8px;
+  font-size: 1rem;
+  resize: vertical;
+  outline: none;
+  background: #f8fafc;
+  color: #333;
+  font-family: inherit;
+  box-sizing: border-box;
+  margin-bottom: 12px;
+}
+
+#memo-textarea:focus {
+  border-color: #5b9df9;
+  background: #fff;
+}
+
+#save-memo-btn {
+  width: 100%;
+  padding: 10px;
+  background: #5b9df9;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  cursor: pointer;
+  font-weight: 600;
+  transition: background 0.2s;
+}
+
+#save-memo-btn:hover {
+  background: #357ae8;
+}
+
+/* 선택된 할 일 스타일 */
+#todo-list li.selected {
+  border: 2px solid #5b9df9;
+  background: #eef2ff;
+}
+
+/* 다크모드 메모 및 선택 스타일 */
+body.dark-mode .memo-wrapper {
+  background: #2a2a40;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+}
+
+body.dark-mode .memo-wrapper h2 {
+  color: #e0e0e0;
+}
+
+body.dark-mode #memo-guide {
+  color: #aaa;
+}
+
+body.dark-mode #memo-textarea {
+  background: #32324a;
+  border-color: #444;
+  color: #e0e0e0;
+}
+
+body.dark-mode #memo-textarea:focus {
+  border-color: #8ab4f8;
+}
+
+body.dark-mode #save-memo-btn {
+  background: #3a3a55;
+  color: #ccc;
+}
+
+body.dark-mode #save-memo-btn:hover {
+  background: #4a4a6a;
+  color: #fff;
+}
+
+body.dark-mode #todo-list li.selected {
+  border-color: #8ab4f8;
+  background: #32324a;
 }
