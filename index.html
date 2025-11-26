@@ -18,6 +18,16 @@
       <input type="date" id="todo-date" aria-label="기한 설정" />
       <button type="submit">추가</button>
     </form>
+
+    <div id="sort-wrapper">
+      <select id="sort-select" aria-label="정렬 순서 선택">
+        <option value="newest">최신순</option>
+        <option value="oldest">오래된순</option>
+        <option value="deadline-asc">기한임박순</option>
+        <option value="deadline-desc">기한여유순</option>
+      </select>
+    </div>
+
     <ul id="todo-list"></ul>
     <button id="toggle-completed-btn" type="button">▶ 완료된 할 일 보기</button>
     <ul id="completed-list" style="display: none"></ul>

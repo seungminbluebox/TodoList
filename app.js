@@ -2,6 +2,7 @@ const todoForm = document.getElementById("todo-form");
 const todoInput = document.getElementById("todo-input");
 const todoDate = document.getElementById("todo-date");
 const todoList = document.getElementById("todo-list");
+const sortSelect = document.getElementById("sort-select");
 const completedList = document.getElementById("completed-list");
 const toggleCompletedBtn = document.getElementById("toggle-completed-btn");
 const trashList = document.getElementById("trash-list");
@@ -31,19 +32,45 @@ function renderTodos() {
   // 완료 리스트
   if (completedList) completedList.innerHTML = "";
 
+  const sortValue = sortSelect ? sortSelect.value : "newest";
+
+  const sortFunction = (a, b) => {
+    if (sortValue === "newest") {
+      return b.id - a.id;
+    } else if (sortValue === "oldest") {
+      return a.id - b.id;
+    } else if (sortValue === "deadline-asc") {
+      // 기한 없는 것은 뒤로
+      if (!a.date) return 1;
+      if (!b.date) return -1;
+      return a.date.localeCompare(b.date);
+    } else if (sortValue === "deadline-desc") {
+      // 기한 없는 것은 뒤로 (또는 앞으로? 보통 기한 있는 것끼리 비교하고 없는건 맨 뒤가 깔끔함)
+      // 여기서는 기한 있는 것 중 늦은 순서, 기한 없는건 맨 뒤로 배치
+      if (!a.date) return 1;
+      if (!b.date) return -1;
+      return b.date.localeCompare(a.date);
+    }
+    return b.id - a.id;
+  };
+
   const uncompleted = toDos.filter((todo) => !todo.completed);
   const completed = toDos.filter((todo) => todo.completed);
 
-  // 미완료 먼저, 최신순(가장 최근이 위)
+  // 정렬 적용
   uncompleted
     .slice()
-    .sort((a, b) => b.id - a.id)
+    .sort(sortFunction)
     .forEach((todo) => paintTodo(todo, todoList));
-  // 완료는 아래, 최신순(가장 최근이 위)
+
   completed
     .slice()
-    .sort((a, b) => b.id - a.id)
+    .sort(sortFunction)
     .forEach((todo) => paintTodo(todo, completedList));
+}
+
+if (sortSelect) {
+  sortSelect.addEventListener("change", renderTodos);
 }
 
 // paintTodo: 어느 ul에 그릴지 인자로 받음

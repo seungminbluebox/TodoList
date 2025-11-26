@@ -509,3 +509,47 @@ body.dark-mode .todo-date {
   background: #3a3a55;
   color: #ccc;
 }
+
+#sort-wrapper {
+  max-width: 440px;
+  margin: 0 auto 16px auto;
+  display: flex;
+  justify-content: flex-end;
+}
+
+#sort-select {
+  padding: 8px 12px;
+  border: 1px solid #e0e7ff;
+  border-radius: 8px;
+  background: #fff;
+  color: #555;
+  font-size: 0.95rem;
+  cursor: pointer;
+  outline: none;
+  transition: border 0.2s, box-shadow 0.2s;
+}
+
+#sort-select:hover {
+  border-color: #5b9df9;
+}
+
+#sort-select:focus {
+  border-color: #5b9df9;
+  box-shadow: 0 0 0 3px rgba(91, 157, 249, 0.1);
+}
+
+/* 다크모드 정렬 드롭다운 */
+body.dark-mode #sort-select {
+  background: #2a2a40;
+  color: #e0e0e0;
+  border-color: #444;
+}
+
+body.dark-mode #sort-select:hover {
+  border-color: #8ab4f8;
+}
+
+body.dark-mode #sort-select:focus {
+  border-color: #8ab4f8;
+  box-shadow: 0 0 0 3px rgba(138, 180, 248, 0.1);
+}
