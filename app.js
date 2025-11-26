@@ -579,18 +579,10 @@ function renderCalendar() {
         const todoId = parseInt(draggingLi.id);
         const todo = toDos.find((t) => t.id === todoId);
         if (todo) {
-          if (
-            confirm(
-              `'${todo.text}'의 기한을 ${year}년 ${
-                month + 1
-              }월 ${i}일로 변경하시겠습니까?`
-            )
-          ) {
-            todo.date = dateString;
-            saveToDos();
-            renderTodos();
-            renderCalendar();
-          }
+          todo.date = dateString;
+          saveToDos();
+          renderTodos();
+          renderCalendar();
         }
       }
     });
