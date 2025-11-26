@@ -1,10 +1,15 @@
 const todoForm = document.getElementById("todo-form");
 const todoInput = document.getElementById("todo-input");
+const todoDate = document.getElementById("todo-date");
 const todoList = document.getElementById("todo-list");
 const completedList = document.getElementById("completed-list");
 const toggleCompletedBtn = document.getElementById("toggle-completed-btn");
 const trashList = document.getElementById("trash-list");
 const toggleTrashBtn = document.getElementById("toggle-trash-btn");
+
+// 다크 모드 토글
+const darkModeToggle = document.getElementById("dark-mode-toggle");
+const DARK_MODE_KEY = "darkMode";
 
 const TODOS_KEY = "todos";
 const TRASH_KEY = "trash";
@@ -64,6 +69,14 @@ function paintTodo(newTodoObject, targetUl) {
 
   li.appendChild(checkbox);
   li.appendChild(span);
+
+  if (newTodoObject.date) {
+    const dateSpan = document.createElement("span");
+    dateSpan.innerText = newTodoObject.date;
+    dateSpan.classList.add("todo-date");
+    li.appendChild(dateSpan);
+  }
+
   li.appendChild(editButton);
   li.appendChild(deleteButton);
 
@@ -143,23 +156,24 @@ function handleToggleTodo(event) {
 // REQ-203 (수정): 수정 버튼 클릭 시 실행
 function handleEditTodo(event) {
   const li = event.target.parentElement;
-  const span = li.querySelector("span"); // <li> 안의 <span> 태그
   const todoId = parseInt(li.id); // 수정할 todo의 ID
+  const todoToUpdate = toDos.find((todo) => todo.id === todoId);
 
   // 사용자에게서 새 텍스트 입력받기
-  const newText = prompt("수정할 내용을 입력하세요:", span.innerText);
+  const newText = prompt("수정할 내용을 입력하세요:", todoToUpdate.text);
 
   // 사용자가 취소를 누르지 않았고, 빈 값이 아니라면
   if (newText !== null && newText.trim() !== "") {
-    // 1. 화면(DOM) 업데이트
-    span.innerText = newText;
+    const newDate = prompt(
+      "수정할 기한을 입력하세요 (YYYY-MM-DD):",
+      todoToUpdate.date || ""
+    );
 
-    // 2. toDos 배열에서 데이터 수정
-    // find로 ID가 일치하는 객체를 찾음
-    const todoToUpdate = toDos.find((todo) => todo.id === todoId);
-    todoToUpdate.text = newText; // 해당 객체의 text 속성 변경
+    // 데이터 수정
+    todoToUpdate.text = newText;
+    todoToUpdate.date = newDate;
 
-    // 3. 변경된 배열을 localStorage에 저장
+    // 저장 및 다시 그리기
     saveToDos();
     renderTodos();
   }
@@ -169,11 +183,14 @@ function handleEditTodo(event) {
 function handleToDoSubmit(event) {
   event.preventDefault();
   const newTodoText = todoInput.value;
+  const newTodoDate = todoDate.value;
   todoInput.value = "";
+  todoDate.value = "";
 
   // 고유 ID와 텍스트, 완료상태를 가진 객체 생성
   const newTodoObject = {
     text: newTodoText,
+    date: newTodoDate,
     id: Date.now(), // 현재 시간을 고유 ID로 사용
     completed: false, // 기본값: 미완료
   };
@@ -240,6 +257,14 @@ function renderTrash() {
     permDeleteButton.addEventListener("click", handlePermanentDelete);
 
     li.appendChild(span);
+
+    if (todo.date) {
+      const dateSpan = document.createElement("span");
+      dateSpan.innerText = todo.date;
+      dateSpan.classList.add("todo-date");
+      li.appendChild(dateSpan);
+    }
+
     li.appendChild(restoreButton);
     li.appendChild(permDeleteButton);
 
@@ -276,4 +301,32 @@ function handlePermanentDelete(event) {
   // 2. 변경된 배열을 localStorage에 저장
   saveToDos();
   renderTrash();
+}
+
+// 다크 모드 관련 함수
+function enableDarkMode() {
+  document.body.classList.add("dark-mode");
+  darkModeToggle.innerText = "☀️";
+  localStorage.setItem(DARK_MODE_KEY, "enabled");
+}
+
+function disableDarkMode() {
+  document.body.classList.remove("dark-mode");
+  darkModeToggle.innerText = "🌙";
+  localStorage.setItem(DARK_MODE_KEY, "disabled");
+}
+
+if (darkModeToggle) {
+  darkModeToggle.addEventListener("click", () => {
+    if (document.body.classList.contains("dark-mode")) {
+      disableDarkMode();
+    } else {
+      enableDarkMode();
+    }
+  });
+}
+
+// 페이지 로드 시 다크 모드 상태 복원
+if (localStorage.getItem(DARK_MODE_KEY) === "enabled") {
+  enableDarkMode();
 }

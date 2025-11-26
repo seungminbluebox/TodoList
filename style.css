@@ -24,7 +24,7 @@ h1 {
 }
 
 #todo-input {
-  width: 320px;
+  width: 260px;
   padding: 14px 16px;
   border: none;
   border-radius: 8px 0 0 8px;
@@ -34,6 +34,22 @@ h1 {
   box-shadow: 0 2px 8px rgba(90, 110, 255, 0.07);
   outline: none;
   transition: box-shadow 0.2s, border 0.2s;
+}
+
+#todo-date {
+  padding: 14px 10px;
+  border: none;
+  border-left: 1px solid #e0e7ff;
+  font-size: 1rem;
+  background: #f8fafc;
+  color: #22223b;
+  outline: none;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+#todo-date:focus {
+  background: #eef2ff;
 }
 
 #todo-input:focus {
@@ -353,4 +369,143 @@ h1 {
 
 #trash-list li button:last-child:hover {
   background: #ffa8a8;
+}
+
+/* 다크 모드 토글 버튼 */
+#dark-mode-toggle {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+  padding: 8px;
+  border-radius: 50%;
+  transition: background 0.2s;
+}
+
+#dark-mode-toggle:hover {
+  background: rgba(0, 0, 0, 0.05);
+}
+
+/* 다크 모드 스타일 */
+body.dark-mode {
+  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+  color: #e0e0e0;
+}
+
+body.dark-mode h1 {
+  color: #e0e0e0;
+}
+
+body.dark-mode #dark-mode-toggle:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+body.dark-mode #todo-input {
+  background: #2a2a40;
+  color: #e0e0e0;
+  box-shadow: none;
+}
+
+body.dark-mode #todo-input:focus {
+  background: #32324a;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.3);
+}
+
+body.dark-mode #todo-list li,
+body.dark-mode #completed-list li {
+  background: #2a2a40;
+  color: #e0e0e0;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.2);
+}
+
+body.dark-mode #todo-list li:hover,
+body.dark-mode #completed-list li:hover {
+  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.3);
+}
+
+body.dark-mode #todo-list li button,
+body.dark-mode #completed-list li button {
+  background: #3a3a55;
+  color: #ccc;
+}
+
+body.dark-mode #todo-list li button:hover,
+body.dark-mode #completed-list li button:hover {
+  background: #4a4a6a;
+  color: #fff;
+}
+
+/* 다크모드에서 완료된 항목 */
+body.dark-mode #todo-list li.completed span,
+body.dark-mode #completed-list li span {
+  color: #666;
+}
+
+/* 다크모드 토글 버튼들 (완료/휴지통 보기) */
+body.dark-mode #toggle-completed-btn,
+body.dark-mode #toggle-trash-btn {
+  background: #2a2a40;
+  color: #8ab4f8;
+}
+
+body.dark-mode #toggle-completed-btn:hover,
+body.dark-mode #toggle-trash-btn:hover {
+  background: #32324a;
+}
+
+/* 다크모드 휴지통 */
+body.dark-mode #trash-list li {
+  background: #3e2a2a;
+  color: #e0e0e0;
+}
+
+body.dark-mode #trash-list li span {
+  color: #a0a0a0;
+}
+
+body.dark-mode #trash-list li button:first-of-type {
+  background: #1b4d2e;
+  color: #a3cfbb;
+}
+
+body.dark-mode #trash-list li button:first-of-type:hover {
+  background: #2b6a40;
+}
+
+body.dark-mode #trash-list li button:last-child {
+  background: #5c2b2b;
+  color: #ffc9c9;
+}
+
+body.dark-mode #trash-list li button:last-child:hover {
+  background: #7a3b3b;
+}
+
+.todo-date {
+  font-size: 0.85rem;
+  color: #666;
+  margin-right: 10px;
+  background: #f1f3f5;
+  padding: 4px 8px;
+  border-radius: 4px;
+  white-space: nowrap;
+}
+
+/* 다크모드 날짜 입력 및 표시 */
+body.dark-mode #todo-date {
+  background: #2a2a40;
+  color: #e0e0e0;
+  border-left: 1px solid #444;
+}
+
+body.dark-mode #todo-date:focus {
+  background: #32324a;
+}
+
+body.dark-mode .todo-date {
+  background: #3a3a55;
+  color: #ccc;
 }

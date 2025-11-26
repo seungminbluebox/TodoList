@@ -6,6 +6,7 @@
     <link rel="stylesheet" href="style.css" />
   </head>
   <body>
+    <button id="dark-mode-toggle" aria-label="다크 모드 토글">🌙</button>
     <h1>ToDo List</h1>
     <form id="todo-form">
       <input
@@ -14,6 +15,7 @@
         placeholder="할 일을 입력하세요"
         required
       />
+      <input type="date" id="todo-date" aria-label="기한 설정" />
       <button type="submit">추가</button>
     </form>
     <ul id="todo-list"></ul>
