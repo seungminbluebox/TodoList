@@ -152,6 +152,7 @@ function handleDeleteTodo(event) {
     saveToDos();
     renderTodos();
     renderTrash();
+    renderCalendar();
   }
 }
 
@@ -167,6 +168,7 @@ function handleRestoreTodo(event) {
     saveToDos();
     renderTodos();
     renderTrash();
+    renderCalendar();
   }
 }
 
@@ -195,6 +197,7 @@ function handleToggleTodo(event) {
 
   saveToDos();
   renderTodos();
+  renderCalendar();
 }
 
 // REQ-203 (수정): 수정 버튼 클릭 시 실행
@@ -220,6 +223,7 @@ function handleEditTodo(event) {
     // 저장 및 다시 그리기
     saveToDos();
     renderTodos();
+    renderCalendar();
   }
 }
 
@@ -242,6 +246,7 @@ function handleToDoSubmit(event) {
   toDos.push(newTodoObject); // 배열에 객체 추가
   saveToDos(); // localStorage에 저장
   renderTodos(); // 화면에 객체를 전달하여 그리기
+  renderCalendar();
 }
 
 todoForm.addEventListener("submit", handleToDoSubmit);
@@ -446,3 +451,133 @@ function updateToDosOrder() {
 
 // 초기화 시 드래그 앤 드롭 설정
 initDragAndDrop();
+
+// 캘린더 관련 변수 및 함수
+const calendarDates = document.getElementById("calendar-dates");
+const currentMonthYear = document.getElementById("current-month-year");
+const prevMonthBtn = document.getElementById("prev-month");
+const nextMonthBtn = document.getElementById("next-month");
+const selectedDateTodos = document.getElementById("selected-date-todos");
+
+let currentDate = new Date();
+
+function renderCalendar() {
+  if (!calendarDates) return;
+
+  const year = currentDate.getFullYear();
+  const month = currentDate.getMonth();
+
+  // 헤더 업데이트
+  currentMonthYear.innerText = `${year}년 ${month + 1}월`;
+
+  // 이번 달의 첫 날과 마지막 날
+  const firstDay = new Date(year, month, 1);
+  const lastDay = new Date(year, month + 1, 0);
+
+  // 지난 달의 마지막 날
+  const prevLastDay = new Date(year, month, 0);
+
+  // 날짜 초기화
+  calendarDates.innerHTML = "";
+  // 선택된 날짜 할 일 목록 초기화 (달이 바뀌면 초기화하거나 유지할 수 있음, 여기선 초기화)
+  if (selectedDateTodos) selectedDateTodos.innerHTML = "";
+
+  // 지난 달 날짜 채우기
+  for (let i = 0; i < firstDay.getDay(); i++) {
+    const dateDiv = document.createElement("div");
+    dateDiv.classList.add("calendar-date", "other-month");
+    dateDiv.innerText = prevLastDay.getDate() - firstDay.getDay() + 1 + i;
+    calendarDates.appendChild(dateDiv);
+  }
+
+  // 이번 달 날짜 채우기
+  for (let i = 1; i <= lastDay.getDate(); i++) {
+    const dateDiv = document.createElement("div");
+    dateDiv.classList.add("calendar-date");
+    dateDiv.innerText = i;
+
+    // 오늘 날짜 표시
+    const today = new Date();
+    if (
+      year === today.getFullYear() &&
+      month === today.getMonth() &&
+      i === today.getDate()
+    ) {
+      dateDiv.classList.add("today");
+    }
+
+    // 해당 날짜에 할 일이 있는지 확인
+    const dateString = `${year}-${String(month + 1).padStart(2, "0")}-${String(
+      i
+    ).padStart(2, "0")}`;
+
+    // 미완료된 할 일 중 해당 날짜인 것 확인
+    const hasTodo = toDos.some(
+      (todo) => !todo.completed && todo.date === dateString
+    );
+
+    if (hasTodo) {
+      dateDiv.classList.add("has-todo");
+      dateDiv.title = "할 일이 있습니다!";
+    }
+
+    // 날짜 클릭 이벤트: 할 일 목록 보여주기 (HTML 요소 추가 방식)
+    dateDiv.addEventListener("click", () => {
+      // 이전에 선택된 날짜 스타일 제거 (선택적)
+      const prevSelected = document.querySelector(".calendar-date.selected");
+      if (prevSelected) prevSelected.classList.remove("selected");
+      dateDiv.classList.add("selected");
+
+      const todosForDate = toDos.filter(
+        (todo) => !todo.completed && todo.date === dateString
+      );
+
+      if (selectedDateTodos) {
+        selectedDateTodos.innerHTML = `<h3>${month + 1}월 ${i}일 일정</h3>`;
+        if (todosForDate.length > 0) {
+          const ul = document.createElement("ul");
+          todosForDate.forEach((todo) => {
+            const li = document.createElement("li");
+            li.innerText = todo.text;
+            ul.appendChild(li);
+          });
+          selectedDateTodos.appendChild(ul);
+        } else {
+          const p = document.createElement("p");
+          p.className = "empty-message";
+          p.innerText = "일정이 없습니다.";
+          selectedDateTodos.appendChild(p);
+        }
+      }
+    });
+
+    calendarDates.appendChild(dateDiv);
+  }
+
+  // 다음 달 날짜 채우기 (남은 칸 채우기)
+  const totalCells = calendarDates.children.length;
+  const remainingCells = 42 - totalCells; // 6주 기준 (7 * 6 = 42)
+
+  for (let i = 1; i <= remainingCells; i++) {
+    const dateDiv = document.createElement("div");
+    dateDiv.classList.add("calendar-date", "other-month");
+    dateDiv.innerText = i;
+    calendarDates.appendChild(dateDiv);
+  }
+}
+
+// 달 이동 이벤트 리스너
+if (prevMonthBtn && nextMonthBtn) {
+  prevMonthBtn.addEventListener("click", () => {
+    currentDate.setMonth(currentDate.getMonth() - 1);
+    renderCalendar();
+  });
+
+  nextMonthBtn.addEventListener("click", () => {
+    currentDate.setMonth(currentDate.getMonth() + 1);
+    renderCalendar();
+  });
+}
+
+// 초기 캘린더 렌더링
+renderCalendar();

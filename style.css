@@ -181,26 +181,173 @@ h1 {
   list-style: none;
 }
 
-/* 반응형 */
-@media (max-width: 600px) {
-  #todo-input {
-    width: 100%;
-    min-width: 0;
-  }
-  #todo-list {
-    max-width: 98vw;
-  }
-  #todo-form {
+/* 메인 레이아웃 */
+.main-container {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 40px;
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+.todo-wrapper {
+  flex: 1;
+  max-width: 480px;
+  width: 100%;
+}
+
+.calendar-wrapper {
+  width: 320px;
+  background: #fff;
+  border-radius: 16px;
+  padding: 20px;
+  box-shadow: 0 4px 20px rgba(90, 110, 255, 0.08);
+}
+
+/* 캘린더 스타일 */
+.calendar-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+#current-month-year {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #22223b;
+}
+
+.calendar-header button {
+  background: none;
+  border: none;
+  font-size: 1.2rem;
+  cursor: pointer;
+  color: #5b9df9;
+  padding: 4px 8px;
+  border-radius: 4px;
+  transition: background 0.2s;
+}
+
+.calendar-header button:hover {
+  background: #eef2ff;
+}
+
+.calendar-weekdays {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  text-align: center;
+  font-weight: 600;
+  color: #888;
+  margin-bottom: 10px;
+  font-size: 0.9rem;
+}
+
+.calendar-dates {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 4px;
+}
+
+.calendar-date {
+  aspect-ratio: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.95rem;
+  cursor: pointer; /* 커서를 포인터로 변경하여 클릭 가능함을 표시 */
+  border-radius: 8px;
+  position: relative;
+  color: #333;
+}
+
+.calendar-date:hover {
+  background-color: #f0f0f0; /* 호버 효과 추가 */
+}
+
+body.dark-mode .calendar-date {
+  color: #ccc;
+}
+
+body.dark-mode .calendar-date.today {
+  background: #32324a;
+  color: #8ab4f8;
+}
+
+body.dark-mode .calendar-date.other-month {
+  color: #555;
+}
+
+/* 다크모드 캘린더 */
+body.dark-mode .calendar-wrapper {
+  background: #2a2a40;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+}
+
+body.dark-mode #current-month-year {
+  color: #e0e0e0;
+}
+
+body.dark-mode .calendar-date {
+  cursor: pointer; /* 커서를 포인터로 변경하여 클릭 가능함을 표시 */
+}
+
+body.dark-mode .calendar-date:hover {
+  background-color: #3a3a55;
+}
+
+.calendar-date.selected {
+  background: #e0e7ff;
+  border: 2px solid #5b9df9;
+}
+
+body.dark-mode .calendar-date.selected {
+  background: #32324a;
+  border-color: #8ab4f8;
+}
+
+/* 할 일이 있는 날짜 표시 */
+.calendar-date.has-todo {
+  background-color: rgba(91, 157, 249, 0.08);
+  font-weight: 600;
+}
+
+.calendar-date.has-todo::after {
+  content: "";
+  width: 6px;
+  height: 6px;
+  background: #ff6b6b;
+  border-radius: 50%;
+  position: absolute;
+  bottom: 6px;
+  left: 50%;
+  transform: translateX(-50%);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+body.dark-mode .calendar-date.has-todo {
+  background-color: rgba(138, 180, 248, 0.15);
+  color: #fff;
+}
+
+/* 반응형: 화면이 좁아지면 세로 배치 */
+@media (max-width: 850px) {
+  .main-container {
     flex-direction: column;
     align-items: center;
-    gap: 10px;
   }
-  #todo-form button {
-    border-radius: 8px;
+
+  .calendar-wrapper {
     width: 100%;
-    padding: 12px 0;
+    max-width: 440px;
+    margin-bottom: 40px;
+    order: -1; /* 캘린더를 위로 올리고 싶으면 사용, 아니면 제거 */
   }
 }
+
 #toggle-completed-btn {
   display: block;
   margin: 24px auto 0 auto;
@@ -440,7 +587,7 @@ body.dark-mode #completed-list li button:hover {
 
 /* 다크모드에서 완료된 항목 */
 body.dark-mode #todo-list li.completed span,
-body.dark-mode #completed-list li span {
+body.dark_mode #completed-list li span {
   color: #666;
 }
 
@@ -568,4 +715,69 @@ body.dark-mode #sort-select:focus {
 body.dark-mode .dragging {
   background: #32324a;
   border-color: #8ab4f8;
+}
+
+/* 캘린더 하단 선택된 날짜 할 일 목록 */
+.selected-date-todos {
+  margin-top: 20px;
+  padding-top: 20px;
+  border-top: 1px solid #eee;
+  min-height: 50px;
+}
+
+.selected-date-todos h3 {
+  font-size: 1rem;
+  color: #22223b;
+  margin: 0 0 12px 0;
+}
+
+.selected-date-todos ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.selected-date-todos li {
+  padding: 8px 0;
+  border-bottom: 1px solid #f1f3f5;
+  font-size: 0.95rem;
+  color: #555;
+  display: flex;
+  align-items: center;
+}
+
+.selected-date-todos li::before {
+  content: "•";
+  color: #5b9df9;
+  margin-right: 8px;
+  font-weight: bold;
+}
+
+.selected-date-todos li:last-child {
+  border-bottom: none;
+}
+
+.selected-date-todos .empty-message {
+  color: #aaa;
+  font-size: 0.9rem;
+  text-align: center;
+  padding: 10px 0;
+}
+
+/* 다크모드 */
+body.dark-mode .selected-date-todos {
+  border-top-color: #444;
+}
+
+body.dark-mode .selected-date-todos h3 {
+  color: #e0e0e0;
+}
+
+body.dark-mode .selected-date-todos li {
+  border-bottom-color: #3a3a55;
+  color: #ccc;
+}
+
+body.dark-mode .selected-date-todos .empty-message {
+  color: #666;
 }
