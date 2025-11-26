@@ -553,3 +553,19 @@ body.dark-mode #sort-select:focus {
   border-color: #8ab4f8;
   box-shadow: 0 0 0 3px rgba(138, 180, 248, 0.1);
 }
+
+/* 드래그 앤 드롭 스타일 */
+.draggable {
+  cursor: move;
+}
+
+.dragging {
+  opacity: 0.5;
+  background: #eef2ff;
+  border: 2px dashed #5b9df9;
+}
+
+body.dark-mode .dragging {
+  background: #32324a;
+  border-color: #8ab4f8;
+}

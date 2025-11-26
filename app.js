@@ -35,6 +35,7 @@ function renderTodos() {
   const sortValue = sortSelect ? sortSelect.value : "newest";
 
   const sortFunction = (a, b) => {
+    if (sortValue === "custom") return 0; // 사용자 지정: 배열 순서 유지
     if (sortValue === "newest") {
       return b.id - a.id;
     } else if (sortValue === "oldest") {
@@ -77,6 +78,22 @@ if (sortSelect) {
 function paintTodo(newTodoObject, targetUl) {
   const li = document.createElement("li");
   li.id = newTodoObject.id;
+  li.draggable = true; // 드래그 가능하도록 설정
+  li.classList.add("draggable");
+
+  // 드래그 이벤트 리스너 추가
+  li.addEventListener("dragstart", () => {
+    li.classList.add("dragging");
+    // 드래그 시작 시 정렬 모드를 '사용자 지정'으로 변경
+    if (sortSelect && sortSelect.value !== "custom") {
+      sortSelect.value = "custom";
+    }
+  });
+
+  li.addEventListener("dragend", () => {
+    li.classList.remove("dragging");
+    updateToDosOrder(); // 드래그 종료 후 순서 저장
+  });
 
   const checkbox = document.createElement("input");
   checkbox.type = "checkbox";
@@ -357,3 +374,75 @@ if (darkModeToggle) {
 if (localStorage.getItem(DARK_MODE_KEY) === "enabled") {
   enableDarkMode();
 }
+
+// 드래그 앤 드롭 기능 구현
+function initDragAndDrop() {
+  const containers = [todoList, completedList];
+
+  containers.forEach((container) => {
+    if (!container) return;
+
+    container.addEventListener("dragover", (e) => {
+      e.preventDefault(); // 드롭 허용
+      const afterElement = getDragAfterElement(container, e.clientY);
+      const draggable = document.querySelector(".dragging");
+      if (afterElement == null) {
+        container.appendChild(draggable);
+      } else {
+        container.insertBefore(draggable, afterElement);
+      }
+    });
+  });
+}
+
+// 드래그 위치 계산 함수
+function getDragAfterElement(container, y) {
+  const draggableElements = [
+    ...container.querySelectorAll(".draggable:not(.dragging)"),
+  ];
+
+  return draggableElements.reduce(
+    (closest, child) => {
+      const box = child.getBoundingClientRect();
+      const offset = y - box.top - box.height / 2;
+      if (offset < 0 && offset > closest.offset) {
+        return { offset: offset, element: child };
+      } else {
+        return closest;
+      }
+    },
+    { offset: Number.NEGATIVE_INFINITY }
+  ).element;
+}
+
+// 변경된 순서대로 toDos 배열 업데이트 및 저장
+function updateToDosOrder() {
+  const newToDos = [];
+
+  // 1. 미완료 리스트 순서대로 추가
+  const uncompletedLis = todoList.querySelectorAll("li");
+  uncompletedLis.forEach((li) => {
+    const todo = toDos.find((t) => t.id === parseInt(li.id));
+    if (todo) newToDos.push(todo);
+  });
+
+  // 2. 완료 리스트 순서대로 추가
+  const completedLis = completedList.querySelectorAll("li");
+  completedLis.forEach((li) => {
+    const todo = toDos.find((t) => t.id === parseInt(li.id));
+    if (todo) newToDos.push(todo);
+  });
+
+  // 3. 혹시 누락된 데이터가 있다면 추가 (안전장치)
+  toDos.forEach((todo) => {
+    if (!newToDos.find((t) => t.id === todo.id)) {
+      newToDos.push(todo);
+    }
+  });
+
+  toDos = newToDos;
+  saveToDos();
+}
+
+// 초기화 시 드래그 앤 드롭 설정
+initDragAndDrop();
