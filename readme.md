@@ -27,3 +27,7 @@
 ---
 
 진행 보고는 단톡방에서 해주세요
+
+git fetch origin
+git rebase origin/main
+git push --force origin Seungmin
