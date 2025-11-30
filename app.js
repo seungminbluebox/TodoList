@@ -8,6 +8,11 @@ const toggleCompletedBtn = document.getElementById("toggle-completed-btn");
 const trashList = document.getElementById("trash-list");
 const toggleTrashBtn = document.getElementById("toggle-trash-btn");
 
+// backdrop and stats close button for overlay handling (added)
+const statsBackdrop = document.getElementById("stats-backdrop");
+const statsCloseBtn = document.getElementById("stats-close-btn");
+
+
 // 다크 모드 토글
 const darkModeToggle = document.getElementById("dark-mode-toggle");
 const DARK_MODE_KEY = "darkMode";
@@ -23,6 +28,7 @@ let deletedToDos = [];
 function saveToDos() {
   localStorage.setItem(TODOS_KEY, JSON.stringify(toDos));
   localStorage.setItem(TRASH_KEY, JSON.stringify(deletedToDos));
+  try { if (typeof renderStats === 'function') renderStats(); } catch(e){}
 }
 
 // 리스트를 다시 그리는 함수 (분류 및 정렬)
@@ -75,6 +81,28 @@ if (sortSelect) {
 }
 
 // paintTodo: 어느 ul에 그릴지 인자로 받음
+
+
+// 남은 시간 계산  
+function getRemainingText(dateString) {
+  if (!dateString) return '';
+  const now = new Date();
+  const due = new Date(dateString + 'T23:59:59');
+  const diffMs = due - now;
+  const diffDays = Math.floor(diffMs / (1000*60*60*24));
+  const diffHours = Math.floor((diffMs % (1000*60*60*24)) / (1000*60*60));
+  if (isNaN(diffMs)) return '';
+  if (diffMs < 0) {
+    const agoDays = Math.abs(diffDays);
+    return `⛔ ${agoDays}일 지남`;
+  }
+  if (diffDays === 0) {
+    if (diffHours <= 0) return '오늘 마감!';
+    return `오늘 마감 (${diffHours}시간 남음)`;
+  }
+  return `${diffDays}일 남음`;
+}
+//  /end 
 function paintTodo(newTodoObject, targetUl) {
   const li = document.createElement("li");
   li.id = newTodoObject.id;
@@ -121,10 +149,27 @@ function paintTodo(newTodoObject, targetUl) {
 
   if (newTodoObject.date) {
     const dateSpan = document.createElement("span");
-    dateSpan.innerText = newTodoObject.date;
+    const remaining = getRemainingText(newTodoObject.date);
     dateSpan.classList.add("todo-date");
+    if (newTodoObject.date) {
+      dateSpan.innerText = newTodoObject.date + " • " + remaining;
+      // 시각적으로 구분: 기간 지남은 빨강, 3일 이내는 주황
+      const due = new Date(newTodoObject.date + 'T23:59:59');
+      if (!newTodoObject.completed && due < new Date()) {
+        dateSpan.style.color = '#e11d48'; // red
+        dateSpan.style.fontWeight = '600';
+      } else if (!newTodoObject.completed) {
+        const diffDays = Math.floor((due - new Date()) / (1000*60*60*24));
+        if (diffDays <= 3) {
+          dateSpan.style.color = '#d97706'; // orange
+          dateSpan.style.fontWeight = '600';
+        }
+      }
+    } else {
+      dateSpan.innerText = '';
+    }
     li.appendChild(dateSpan);
-  }
+    }
 
   li.appendChild(editButton);
   li.appendChild(deleteButton);
@@ -657,3 +702,119 @@ if (prevMonthBtn && nextMonthBtn) {
 
 // 초기 캘린더 렌더링
 renderCalendar();
+
+
+
+// 통계 기능 
+(function initStatsFeature(){
+  
+  const showStatsBtn = document.getElementById("show-stats-btn");
+  const showTodosBtn = document.getElementById("show-todos-btn");
+  const statsSection = document.getElementById("stats-section");
+  const mainContainer = document.querySelector(".main-container");
+
+  function calculateStats() {
+    const total = toDos.length;
+    const completed = toDos.filter(t => t.completed).length;
+    const active = total - completed;
+    const withDue = toDos.filter(t => t.date).length;
+    const overdue = toDos.filter(t => t.date && !t.completed && new Date(t.date + 'T23:59:59') < new Date()).length;
+    const upcoming7 = toDos.filter(t => {
+      if (!t.date) return false;
+      const diff = (new Date(t.date + 'T23:59:59') - new Date()) / (1000*60*60*24);
+      return diff >= 0 && diff <= 7;
+    }).length;
+    return { total, completed, active, withDue, overdue, upcoming7 };
+  }
+
+  window.renderStats = function renderStats() {
+    const statsList = document.getElementById("stats-list");
+    if (!statsList) return;
+    const s = calculateStats();
+    statsList.innerHTML = "";
+    const rows = [
+      ['전체 할일', s.total],
+      ['완료', s.completed],
+      ['미완료', s.active],
+      ['마감일 있는 항목', s.withDue],
+      ['마감 지난 항목', s.overdue],
+      ['앞으로 7일 내 마감', s.upcoming7]
+    ];
+    rows.forEach(r => {
+      const li = document.createElement('li');
+      li.textContent = `${r[0]}: ${r[1]}`;
+      statsList.appendChild(li);
+    });
+  };
+
+  if (showStatsBtn && showTodosBtn && statsSection && mainContainer) {
+    showStatsBtn.addEventListener('click', () => {
+  if (statsSection) { statsSection.classList.add('stats-overlay'); statsSection.style.display = 'block'; }
+  if (statsBackdrop) { statsBackdrop.style.display = 'block'; }
+  document.body.classList.add('stats-open');
+  if (showStatsBtn) showStatsBtn.style.display = 'none';
+  if (showTodosBtn) showTodosBtn.style.display = 'inline-block';
+  try { renderStats(); } catch(e){}
+});
+    showTodosBtn.addEventListener('click', () => {
+  if (statsSection) { statsSection.classList.remove('stats-overlay'); statsSection.style.display = 'none'; }
+  if (statsBackdrop) { statsBackdrop.style.display = 'none'; }
+  document.body.classList.remove('stats-open');
+  if (showStatsBtn) showStatsBtn.style.display = 'inline-block';
+  if (showTodosBtn) showTodosBtn.style.display = 'none';
+});
+  }
+})();
+// /end stats
+
+
+
+
+// Close handlers for stats overlay
+function closeStatsOverlay() {
+  if (statsSection) { statsSection.classList.remove('stats-overlay'); statsSection.style.display = 'none'; }
+  if (statsBackdrop) { statsBackdrop.style.display = 'none'; }
+  document.body.classList.remove('stats-open');
+  if (showStatsBtn) showStatsBtn.style.display = 'inline-block';
+  if (showTodosBtn) showTodosBtn.style.display = 'none';
+}
+
+if (statsBackdrop) {
+  statsBackdrop.addEventListener('click', () => {
+    closeStatsOverlay();
+  });
+}
+if (statsCloseBtn) {
+  statsCloseBtn.addEventListener('click', () => {
+    closeStatsOverlay();
+  });
+}
+// also close on ESC
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') {
+    // only if overlay is visible
+    if (statsSection && statsSection.classList.contains('stats-overlay')) {
+      closeStatsOverlay();
+    }
+  }
+});
+
+
+window.addEventListener('load', () => {
+  const statsSection = document.getElementById("stats-section");
+  const statsBackdrop = document.getElementById("stats-backdrop");
+  const statsCloseBtn = document.getElementById("stats-close-btn");
+  const showStatsBtn = document.getElementById("show-stats-btn");
+  const showTodosBtn = document.getElementById("show-todos-btn");
+
+  function closeStatsOverlay() {
+    if (statsSection) { statsSection.classList.remove('stats-overlay'); statsSection.style.display = 'none'; }
+    if (statsBackdrop) { statsBackdrop.style.display = 'none'; }
+    document.body.classList.remove('stats-open');
+    if (showStatsBtn) showStatsBtn.style.display = 'inline-block';
+    if (showTodosBtn) showTodosBtn.style.display = 'none';
+  }
+
+  if (statsBackdrop) statsBackdrop.addEventListener('click', closeStatsOverlay);
+  if (statsCloseBtn) statsCloseBtn.addEventListener('click', closeStatsOverlay);
+});

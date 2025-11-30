@@ -79,7 +79,7 @@ h1 {
 }
 
 #todo-list {
-  max-width: 440px;
+  max-width: 520px;
   margin: 0 auto;
   padding: 0;
   list-style: none;
@@ -195,7 +195,7 @@ h1 {
 }
 
 .calendar-wrapper {
-  width: 320px;
+  width: 380px;
   background: #fff;
   border-radius: 16px;
   padding: 20px;
@@ -205,12 +205,12 @@ h1 {
 
 .todo-wrapper {
   flex: 1;
-  min-width: 360px;
-  max-width: 480px;
+  min-width: 600px;
+  max-width: 720px;
 }
 
 .memo-wrapper {
-  width: 300px;
+  width: 360px;
   background: #fff;
   border-radius: 16px;
   padding: 20px;
@@ -904,3 +904,89 @@ body.dark-mode #todo-list li.selected {
   border-color: #8ab4f8;
   background: #32324a;
 }
+
+
+
+/*  통계 표시시 나타나는 레이아웃  */
+.main-container {
+  display: flex !important;
+  gap: 24px;
+  align-items: flex-start;
+  justify-content: center;
+}
+
+
+
+/* 완료 드래그 동작에 영향 X */
+#todo-list, #completed-list {
+  width: 100%;
+}
+
+/*  통계 오버레이 */
+#stats-section.stats-overlay {
+  position: fixed;
+  top: 64px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 88%;
+  max-width: 1100px;
+  z-index: 1200;
+  background: rgba(255,255,255,0.98);
+  box-shadow: 0 14px 48px rgba(16,24,40,0.18);
+  border-radius: 12px;
+  padding: 20px;
+  overflow: auto;
+}
+
+/* 통계 열려 있는 동안 배경색 살짝 어둡게 변경 */
+body.stats-open::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background: rgba(10, 10, 12, 0.18);
+  z-index: 1100;
+}
+
+/* 모바일 환경에서도 오버레이 활성화 효율적 */
+@media (max-width: 900px) {
+  .calendar-wrapper { display: none; } 
+  .memo-wrapper { display: none; }
+  .todo-wrapper { min-width: 100%; max-width: 100%; }
+  #stats-section.stats-overlay { width: 96%; top: 48px; }
+}
+
+
+/* 오버레이시 배경 클릭하여 닫기 */
+#stats-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(10,10,12,0.18);
+  z-index: 1150;
+  display: none;
+}
+
+/* 오버레이 클래스  */
+#stats-section.stats-overlay {
+  position: fixed;
+  top: 64px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 88%;
+  max-width: 1100px;
+  z-index: 1200;
+  background: rgba(255,255,255,0.98);
+  box-shadow: 0 14px 48px rgba(16,24,40,0.18);
+  border-radius: 12px;
+  padding: 24px 28px;
+  overflow: auto;
+}
+
+/* 닫기 버튼 */
+#stats-close-btn {
+  background: #efefef;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 6px 10px;
+  cursor: pointer;
+}
+#stats-close-btn:hover { background:#e0e0e0; }
