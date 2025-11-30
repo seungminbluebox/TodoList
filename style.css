@@ -544,11 +544,18 @@ body.dark-mode .calendar-date.has-todo {
   background: #ffa8a8;
 }
 
-/* 다크 모드 토글 버튼 */
-#dark-mode-toggle {
+/* 상단 컨트롤 (통계 버튼 + 다크모드 토글) */
+.top-controls {
   position: absolute;
   top: 20px;
   right: 20px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+/* 다크 모드 토글 버튼 */
+#dark-mode-toggle {
   background: none;
   border: none;
   font-size: 1.5rem;
@@ -905,8 +912,6 @@ body.dark-mode #todo-list li.selected {
   background: #32324a;
 }
 
-
-
 /*  통계 표시시 나타나는 레이아웃  */
 .main-container {
   display: flex !important;
@@ -915,10 +920,9 @@ body.dark-mode #todo-list li.selected {
   justify-content: center;
 }
 
-
-
 /* 완료 드래그 동작에 영향 X */
-#todo-list, #completed-list {
+#todo-list,
+#completed-list {
   width: 100%;
 }
 
@@ -931,8 +935,8 @@ body.dark-mode #todo-list li.selected {
   width: 88%;
   max-width: 1100px;
   z-index: 1200;
-  background: rgba(255,255,255,0.98);
-  box-shadow: 0 14px 48px rgba(16,24,40,0.18);
+  background: rgba(255, 255, 255, 0.98);
+  box-shadow: 0 14px 48px rgba(16, 24, 40, 0.18);
   border-radius: 12px;
   padding: 20px;
   overflow: auto;
@@ -940,7 +944,7 @@ body.dark-mode #todo-list li.selected {
 
 /* 통계 열려 있는 동안 배경색 살짝 어둡게 변경 */
 body.stats-open::before {
-  content: '';
+  content: "";
   position: fixed;
   inset: 0;
   background: rgba(10, 10, 12, 0.18);
@@ -949,18 +953,27 @@ body.stats-open::before {
 
 /* 모바일 환경에서도 오버레이 활성화 효율적 */
 @media (max-width: 900px) {
-  .calendar-wrapper { display: none; } 
-  .memo-wrapper { display: none; }
-  .todo-wrapper { min-width: 100%; max-width: 100%; }
-  #stats-section.stats-overlay { width: 96%; top: 48px; }
+  .calendar-wrapper {
+    display: none;
+  }
+  .memo-wrapper {
+    display: none;
+  }
+  .todo-wrapper {
+    min-width: 100%;
+    max-width: 100%;
+  }
+  #stats-section.stats-overlay {
+    width: 96%;
+    top: 48px;
+  }
 }
-
 
 /* 오버레이시 배경 클릭하여 닫기 */
 #stats-backdrop {
   position: fixed;
   inset: 0;
-  background: rgba(10,10,12,0.18);
+  background: rgba(10, 10, 12, 0.18);
   z-index: 1150;
   display: none;
 }
@@ -974,8 +987,8 @@ body.stats-open::before {
   width: 88%;
   max-width: 1100px;
   z-index: 1200;
-  background: rgba(255,255,255,0.98);
-  box-shadow: 0 14px 48px rgba(16,24,40,0.18);
+  background: rgba(255, 255, 255, 0.98);
+  box-shadow: 0 14px 48px rgba(16, 24, 40, 0.18);
   border-radius: 12px;
   padding: 24px 28px;
   overflow: auto;
@@ -989,4 +1002,144 @@ body.stats-open::before {
   padding: 6px 10px;
   cursor: pointer;
 }
-#stats-close-btn:hover { background:#e0e0e0; }
+#stats-close-btn:hover {
+  background: #e0e0e0;
+}
+
+/* 통계 보기 / 목록 보기 버튼 스타일 */
+#show-stats-btn,
+#show-todos-btn {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 30px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 4px 15px rgba(118, 75, 162, 0.3);
+  transition: all 0.3s ease;
+  letter-spacing: 0.5px;
+}
+
+#show-stats-btn:hover,
+#show-todos-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(118, 75, 162, 0.4);
+  background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
+}
+
+#show-stats-btn:active,
+#show-todos-btn:active {
+  transform: translateY(1px);
+  box-shadow: 0 2px 10px rgba(118, 75, 162, 0.3);
+}
+
+/* 다크모드에서의 버튼 스타일 */
+body.dark-mode #show-stats-btn,
+body.dark-mode #show-todos-btn {
+  background: linear-gradient(135deg, #89f7fe 0%, #66a6ff 100%);
+  color: #1a1a2e;
+  box-shadow: 0 4px 15px rgba(102, 166, 255, 0.3);
+}
+
+body.dark-mode #show-stats-btn:hover,
+body.dark-mode #show-todos-btn:hover {
+  box-shadow: 0 6px 20px rgba(102, 166, 255, 0.4);
+  background: linear-gradient(135deg, #66a6ff 0%, #89f7fe 100%);
+}
+
+/* 통계 리스트 스타일링 */
+#stats-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 20px;
+  list-style: none;
+  padding: 0;
+  margin-top: 20px;
+}
+
+#stats-list li {
+  background: #f8fafc;
+  border-radius: 12px;
+  padding: 24px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  transition: transform 0.2s, box-shadow 0.2s;
+  border: 1px solid #eef2ff;
+}
+
+#stats-list li:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 20px rgba(90, 110, 255, 0.12);
+  border-color: #5b9df9;
+}
+
+/* 통계 텍스트 스타일 */
+#stats-list li strong {
+  display: block;
+  font-size: 2.5rem;
+  color: #5b9df9;
+  margin-bottom: 8px;
+  font-weight: 800;
+  line-height: 1;
+}
+
+#stats-list li span {
+  font-size: 1rem;
+  color: #555;
+  font-weight: 600;
+  word-break: keep-all;
+}
+
+/* 통계 제목 스타일 */
+.stats-card h2 {
+  text-align: center;
+  color: #22223b;
+  margin-bottom: 30px;
+  font-size: 1.8rem;
+  font-weight: 700;
+}
+
+/* 다크모드 통계 스타일 */
+body.dark-mode #stats-section.stats-overlay {
+  background: #1e1e2e;
+  color: #e0e0e0;
+}
+
+body.dark-mode #stats-list li {
+  background: #2a2a40;
+  border-color: #444;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+body.dark-mode #stats-list li:hover {
+  border-color: #8ab4f8;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
+}
+
+body.dark-mode #stats-list li strong {
+  color: #8ab4f8;
+}
+
+body.dark-mode #stats-list li span {
+  color: #aaa;
+}
+
+body.dark-mode .stats-card h2 {
+  color: #e0e0e0;
+}
+
+body.dark-mode #stats-close-btn {
+  background: #3a3a55;
+  border-color: #555;
+  color: #e0e0e0;
+}
+
+body.dark-mode #stats-close-btn:hover {
+  background: #4a4a6a;
+}
