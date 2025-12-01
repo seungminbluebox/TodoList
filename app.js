@@ -49,7 +49,9 @@ function renderTodos() {
     } else if (sortValue === "oldest") {
       return a.id - b.id;
     } else if (sortValue === "category") {
-      return a.category.localeCompare(b.category); 
+      const catA = a.category || "기타"; 
+      const catB = b.category || "기타"; 
+      return catA.localeCompare(catB); 
     } else if (sortValue === "deadline-asc") {
       // 기한 없는 것은 뒤로
       if (!a.date) return 1;
