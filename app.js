@@ -7,6 +7,7 @@ const completedList = document.getElementById("completed-list");
 const toggleCompletedBtn = document.getElementById("toggle-completed-btn");
 const trashList = document.getElementById("trash-list");
 const toggleTrashBtn = document.getElementById("toggle-trash-btn");
+const todoCategory = document.getElementById("todo-category");
 
 // backdrop and stats close button for overlay handling (added)
 const statsBackdrop = document.getElementById("stats-backdrop");
@@ -47,6 +48,8 @@ function renderTodos() {
       return b.id - a.id;
     } else if (sortValue === "oldest") {
       return a.id - b.id;
+    } else if (sortValue === "category") {
+      return a.category.localeCompare(b.category); 
     } else if (sortValue === "deadline-asc") {
       // 기한 없는 것은 뒤로
       if (!a.date) return 1;
@@ -130,6 +133,15 @@ function paintTodo(newTodoObject, targetUl) {
   checkbox.checked = !!newTodoObject.completed;
   checkbox.addEventListener("change", handleToggleTodo);
 
+  const categorySpan = document.createElement("span");
+  categorySpan.innerText = newTodoObject.category || "기타";
+  categorySpan.classList.add("category-tag");
+  // 카테고리별 클래스 추가
+  if (newTodoObject.category === "개인") categorySpan.classList.add("cat-personal");
+  else if (newTodoObject.category === "업무") categorySpan.classList.add("cat-work");
+  else if (newTodoObject.category === "공부") categorySpan.classList.add("cat-study");
+  else categorySpan.classList.add("cat-etc");
+
   const span = document.createElement("span");
   span.innerText = newTodoObject.text;
 
@@ -142,6 +154,7 @@ function paintTodo(newTodoObject, targetUl) {
   deleteButton.addEventListener("click", handleDeleteTodo);
 
   li.appendChild(checkbox);
+  li.appendChild(categorySpan);
   li.appendChild(span);
 
   // 할 일 클릭 시 메모 기능 활성화 (체크박스, 버튼 제외)
@@ -284,13 +297,16 @@ function handleToDoSubmit(event) {
   event.preventDefault();
   const newTodoText = todoInput.value;
   const newTodoDate = todoDate.value;
+  const newTodoCategory = todoCategory.value;
   todoInput.value = "";
   todoDate.value = "";
+  todoCategory.value = "";
 
   // 고유 ID와 텍스트, 완료상태를 가진 객체 생성
   const newTodoObject = {
     text: newTodoText,
     date: newTodoDate,
+    category: newTodoCategory,
     id: Date.now(), // 현재 시간을 고유 ID로 사용
     completed: false, // 기본값: 미완료
     memo: "", // 메모 초기화
