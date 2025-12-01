@@ -1143,3 +1143,60 @@ body.dark-mode #stats-close-btn {
 body.dark-mode #stats-close-btn:hover {
   background: #4a4a6a;
 }
+
+#todo-category {
+  padding: 14px 10px;
+  border: none;
+  border-radius: 8px 0 0 8px; 
+  background: #f8fafc;
+  color: #22223b;
+  font-size: 1rem;
+  outline: none;
+  border-right: 1px solid #e0e7ff;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+/* 카테고리 태그 스타일 */
+.category-tag {
+  font-size: 0.75rem;
+  padding: 4px 8px;
+  border-radius: 6px;
+  margin-right: 10px;
+  font-weight: 600;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+/* 카테고리별 색상 지정 */
+.cat-personal {
+  background-color: #e3fae5; 
+  color: #2b8a3e;
+}
+
+.cat-work {
+  background-color: #e7f5ff; 
+  color: #1c7ed6;
+}
+
+.cat-study {
+  background-color: #fff0f6; 
+  color: #c2255c;
+}
+
+.cat-etc {
+  background-color: #f1f3f5; 
+  color: #495057;
+}
+
+/* 다크모드 카테고리 */
+body.dark-mode #todo-category {
+  background: #2a2a40;
+  color: #e0e0e0;
+  border-right-color: #444;
+}
+
+body.dark-mode .cat-personal { background: #1b4d2e; color: #b2f2bb; }
+body.dark-mode .cat-work { background: #1864ab; color: #d0ebff; }
+body.dark-mode .cat-study { background: #a61e4d; color: #ffdeeb; }
+body.dark-mode .cat-etc { background: #343a40; color: #ced4da; }
