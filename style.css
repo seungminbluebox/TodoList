@@ -1200,3 +1200,67 @@ body.dark-mode .cat-personal { background: #1b4d2e; color: #b2f2bb; }
 body.dark-mode .cat-work { background: #1864ab; color: #d0ebff; }
 body.dark-mode .cat-study { background: #a61e4d; color: #ffdeeb; }
 body.dark-mode .cat-etc { background: #343a40; color: #ced4da; }
+
+/* =========================================
+   가독성 개선 패치
+   ========================================= */
+
+/* 1. 버튼 숨기기 (평소엔 안 보이게) */
+#todo-list li button,
+#completed-list li button {
+  opacity: 0;                
+  width: 0;                  
+  padding: 0;                
+  margin: 0;                 
+  overflow: hidden;          
+  transition: all 0.2s ease;
+}
+
+/* 마우스를 올렸을 때만 버튼 나오게 */
+#todo-list li:hover button,
+#completed-list li:hover button {
+  opacity: 1;
+  width: auto;               /* 원래 너비로 복구 */
+  padding: 7px 14px;         /* 원래 패딩 복구 (기존 CSS 값 참조) */
+  margin-left: 8px;          /* 원래 마진 복구 */
+}
+
+/* 2. '할 일 텍스트' 부각 */
+/* 클래스가 없는 span(=할 일 내용)만 골라서 스타일링 */
+#todo-list li > span:not([class]), 
+#completed-list li > span:not([class]) {
+  font-size: 1.2rem;       /* 글자 크기 키움 (기존 1.0rem -> 1.2rem) */
+  font-weight: 700;
+  color: #1a1a2e;
+  margin-right: 15px;      /* 오른쪽 날짜와의 간격 벌리기 */
+  line-height: 1.2;
+}
+
+/* 3. 카테고리 태그: 흐리게 */
+.category-tag {
+  font-size: 0.75rem !important; /* 강제로 작게 */
+  padding: 3px 8px !important;
+  opacity: 0.85;                 /* 살짝 투명하게 */
+  border-radius: 4px !important;
+  transform: scale(0.95);        /* 미세하게 축소 */
+}
+
+/* 4. 날짜 태그: 배경 없애고 글자만 */
+.todo-date {
+  font-size: 0.8rem !important;
+  color: #999 !important;        /* 연한 회색 */
+  background: transparent !important; /* 배경색 제거 */
+  padding: 0 !important;
+  font-weight: 400 !important;
+}
+
+/* 날짜가 임박한 경우에만 색상 강조 유지 */
+#todo-list li span.todo-date[style*="color"] {
+    background: transparent !important;
+    font-weight: 600 !important;
+}
+
+/* 5. 다크모드 대응 */
+body.dark-mode #todo-list li > span:not([class]) {
+  color: #fff; /* 다크모드에선 흰색으로 강조 */
+}
