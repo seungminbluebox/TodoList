@@ -1277,3 +1277,31 @@ body.dark-mode .cat-etc {
 body.dark-mode .todo-content > span:not([class]) {
   color: #fff; /* 다크모드에선 흰색으로 강조 */
 }
+
+/* 수정 모드 textarea 스타일 */
+.edit-textarea {
+  flex: 1;
+  font-size: 1.1rem;
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  resize: none;
+  font-family: inherit;
+  min-height: 40px;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.edit-textarea:focus {
+  border-color: #5b9df9;
+}
+
+body.dark-mode .edit-textarea {
+  background: #3a3a55;
+  color: #fff;
+  border-color: #555;
+}
+
+body.dark-mode .edit-textarea:focus {
+  border-color: #8ab4f8;
+}

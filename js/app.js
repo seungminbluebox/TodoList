@@ -231,22 +231,41 @@ function handleToggleTodo(event) {
 
 // 수정 핸들러
 function handleEditTodo(event) {
-  const li = event.target.closest("li");
+  const btn = event.target;
+  const li = btn.closest("li");
+  const contentDiv = li.querySelector(".todo-content");
   const todoId = parseInt(li.id);
   const todoToUpdate = state.toDos.find((todo) => todo.id === todoId);
 
-  const newText = prompt("수정할 내용을 입력하세요:", todoToUpdate.text);
+  if (btn.innerText === "수정") {
+    const span = contentDiv.querySelector("span:not(.category-tag)");
+    const currentText = span.innerText;
 
-  if (newText !== null && newText.trim() !== "") {
-    const newDate = prompt(
-      "수정할 기한을 입력하세요 (YYYY-MM-DD):",
-      todoToUpdate.date || ""
-    );
-    todoToUpdate.text = newText;
-    todoToUpdate.date = newDate;
-    saveToDos();
-    renderTodos();
-    renderCalendar();
+    const textarea = document.createElement("textarea");
+    textarea.value = currentText;
+    textarea.classList.add("edit-textarea");
+
+    contentDiv.replaceChild(textarea, span);
+    btn.innerText = "저장";
+    textarea.focus();
+
+    // 수정 중에는 드래그 앤 드롭 비활성화
+    li.draggable = false;
+  } else if (btn.innerText === "저장") {
+    const textarea = contentDiv.querySelector(".edit-textarea");
+    const newText = textarea.value;
+
+    if (newText.trim() === "") {
+      alert("내용을 입력해주세요.");
+      return;
+    }
+
+    if (todoToUpdate) {
+      todoToUpdate.text = newText;
+      saveToDos();
+      renderTodos();
+      renderCalendar();
+    }
   }
 }
 
