@@ -50,8 +50,14 @@ function renderTodos() {
   const uncompleted = state.toDos.filter((todo) => !todo.completed);
   const completed = state.toDos.filter((todo) => todo.completed);
 
-  uncompleted.slice().sort(sortFunction).forEach((todo) => paintTodo(todo, todoList));
-  completed.slice().sort(sortFunction).forEach((todo) => paintTodo(todo, completedList));
+  uncompleted
+    .slice()
+    .sort(sortFunction)
+    .forEach((todo) => paintTodo(todo, todoList));
+  completed
+    .slice()
+    .sort(sortFunction)
+    .forEach((todo) => paintTodo(todo, completedList));
 }
 
 if (sortSelect) {
@@ -65,11 +71,14 @@ function getRemainingText(dateString) {
   const due = new Date(dateString + "T23:59:59");
   const diffMs = due - now;
   const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
-  const diffHours = Math.floor((diffMs % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-  
+  const diffHours = Math.floor(
+    (diffMs % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)
+  );
+
   if (isNaN(diffMs)) return "";
   if (diffMs < 0) return `⛔ ${Math.abs(diffDays)}일 지남`;
-  if (diffDays === 0) return diffHours <= 0 ? "오늘 마감!" : `오늘 마감 (${diffHours}시간 남음)`;
+  if (diffDays === 0)
+    return diffHours <= 0 ? "오늘 마감!" : `오늘 마감 (${diffHours}시간 남음)`;
   return `${diffDays}일 남음`;
 }
 
@@ -82,7 +91,8 @@ function paintTodo(newTodoObject, targetUl) {
 
   li.addEventListener("dragstart", () => {
     li.classList.add("dragging");
-    if (sortSelect && sortSelect.value !== "custom") sortSelect.value = "custom";
+    if (sortSelect && sortSelect.value !== "custom")
+      sortSelect.value = "custom";
   });
 
   li.addEventListener("dragend", () => {
@@ -98,9 +108,12 @@ function paintTodo(newTodoObject, targetUl) {
   const categorySpan = document.createElement("span");
   categorySpan.innerText = newTodoObject.category || "기타";
   categorySpan.classList.add("category-tag");
-  if (newTodoObject.category === "개인") categorySpan.classList.add("cat-personal");
-  else if (newTodoObject.category === "업무") categorySpan.classList.add("cat-work");
-  else if (newTodoObject.category === "공부") categorySpan.classList.add("cat-study");
+  if (newTodoObject.category === "개인")
+    categorySpan.classList.add("cat-personal");
+  else if (newTodoObject.category === "업무")
+    categorySpan.classList.add("cat-work");
+  else if (newTodoObject.category === "공부")
+    categorySpan.classList.add("cat-study");
   else categorySpan.classList.add("cat-etc");
 
   const span = document.createElement("span");
@@ -114,9 +127,15 @@ function paintTodo(newTodoObject, targetUl) {
   deleteButton.innerText = "삭제";
   deleteButton.addEventListener("click", handleDeleteTodo);
 
-  li.appendChild(checkbox);
-  li.appendChild(categorySpan);
-  li.appendChild(span);
+  // 구조 변경: 날짜(상단) + 내용(하단)
+  const contentDiv = document.createElement("div");
+  contentDiv.classList.add("todo-content");
+
+  contentDiv.appendChild(checkbox);
+  contentDiv.appendChild(categorySpan);
+  contentDiv.appendChild(span);
+  contentDiv.appendChild(editButton);
+  contentDiv.appendChild(deleteButton);
 
   span.addEventListener("click", () => handleTodoClick(newTodoObject.id));
 
@@ -137,11 +156,10 @@ function paintTodo(newTodoObject, targetUl) {
         dateSpan.style.fontWeight = "600";
       }
     }
-    li.appendChild(dateSpan);
+    li.appendChild(dateSpan); // 날짜를 먼저 추가 (상단)
   }
 
-  li.appendChild(editButton);
-  li.appendChild(deleteButton);
+  li.appendChild(contentDiv); // 내용을 나중에 추가 (하단)
 
   if (newTodoObject.completed) li.classList.add("completed");
   targetUl.appendChild(li);
@@ -149,7 +167,7 @@ function paintTodo(newTodoObject, targetUl) {
 
 // 삭제 핸들러 (state.toDos 수정)
 function handleDeleteTodo(event) {
-  const li = event.target.parentElement;
+  const li = event.target.closest("li");
   const todoId = parseInt(li.id);
 
   if (!window.confirm("휴지통으로 이동하시겠습니까?")) return;
@@ -174,7 +192,9 @@ function handleRestoreTodo(event) {
 
   const todoToRestore = state.deletedToDos.find((todo) => todo.id === todoId);
   if (todoToRestore) {
-    state.deletedToDos = state.deletedToDos.filter((todo) => todo.id !== todoId);
+    state.deletedToDos = state.deletedToDos.filter(
+      (todo) => todo.id !== todoId
+    );
     state.toDos.push(todoToRestore);
     saveToDos();
     renderTodos();
@@ -188,7 +208,8 @@ function handlePermanentDelete(event) {
   const li = event.target.parentElement;
   const todoId = parseInt(li.id);
 
-  if (!window.confirm("정말 영구 삭제하시겠습니까? 복구할 수 없습니다.")) return;
+  if (!window.confirm("정말 영구 삭제하시겠습니까? 복구할 수 없습니다."))
+    return;
 
   state.deletedToDos = state.deletedToDos.filter((todo) => todo.id !== todoId);
   saveToDos();
@@ -210,19 +231,41 @@ function handleToggleTodo(event) {
 
 // 수정 핸들러
 function handleEditTodo(event) {
-  const li = event.target.parentElement;
+  const btn = event.target;
+  const li = btn.closest("li");
+  const contentDiv = li.querySelector(".todo-content");
   const todoId = parseInt(li.id);
   const todoToUpdate = state.toDos.find((todo) => todo.id === todoId);
 
-  const newText = prompt("수정할 내용을 입력하세요:", todoToUpdate.text);
+  if (btn.innerText === "수정") {
+    const span = contentDiv.querySelector("span:not(.category-tag)");
+    const currentText = span.innerText;
 
-  if (newText !== null && newText.trim() !== "") {
-    const newDate = prompt("수정할 기한을 입력하세요 (YYYY-MM-DD):", todoToUpdate.date || "");
-    todoToUpdate.text = newText;
-    todoToUpdate.date = newDate;
-    saveToDos();
-    renderTodos();
-    renderCalendar();
+    const textarea = document.createElement("textarea");
+    textarea.value = currentText;
+    textarea.classList.add("edit-textarea");
+
+    contentDiv.replaceChild(textarea, span);
+    btn.innerText = "저장";
+    textarea.focus();
+
+    // 수정 중에는 드래그 앤 드롭 비활성화
+    li.draggable = false;
+  } else if (btn.innerText === "저장") {
+    const textarea = contentDiv.querySelector(".edit-textarea");
+    const newText = textarea.value;
+
+    if (newText.trim() === "") {
+      alert("내용을 입력해주세요.");
+      return;
+    }
+
+    if (todoToUpdate) {
+      todoToUpdate.text = newText;
+      saveToDos();
+      renderTodos();
+      renderCalendar();
+    }
   }
 }
 
@@ -234,7 +277,7 @@ function handleToDoSubmit(event) {
   const newTodoCategory = todoCategory.value;
   todoInput.value = "";
   todoDate.value = "";
-  todoCategory.value = "";
+  // todoCategory.value는 초기화하지 않고 유지
 
   const newTodoObject = {
     text: newTodoText,
@@ -289,7 +332,9 @@ if (toggleCompletedBtn && completedList) {
   toggleCompletedBtn.addEventListener("click", () => {
     const isHidden = completedList.style.display === "none";
     completedList.style.display = isHidden ? "" : "none";
-    toggleCompletedBtn.innerHTML = isHidden ? "▼ 완료된 할 일 숨기기" : "▶ 완료된 할 일 보기";
+    toggleCompletedBtn.innerHTML = isHidden
+      ? "▼ 완료된 할 일 숨기기"
+      : "▶ 완료된 할 일 보기";
   });
 }
 
@@ -339,13 +384,19 @@ function initDragAndDrop() {
 }
 
 function getDragAfterElement(container, y) {
-  const draggableElements = [...container.querySelectorAll(".draggable:not(.dragging)")];
-  return draggableElements.reduce((closest, child) => {
-    const box = child.getBoundingClientRect();
-    const offset = y - box.top - box.height / 2;
-    if (offset < 0 && offset > closest.offset) return { offset: offset, element: child };
-    else return closest;
-  }, { offset: Number.NEGATIVE_INFINITY }).element;
+  const draggableElements = [
+    ...container.querySelectorAll(".draggable:not(.dragging)"),
+  ];
+  return draggableElements.reduce(
+    (closest, child) => {
+      const box = child.getBoundingClientRect();
+      const offset = y - box.top - box.height / 2;
+      if (offset < 0 && offset > closest.offset)
+        return { offset: offset, element: child };
+      else return closest;
+    },
+    { offset: Number.NEGATIVE_INFINITY }
+  ).element;
 }
 
 function updateToDosOrder() {
@@ -439,17 +490,25 @@ function renderCalendar() {
     dateDiv.innerText = i;
 
     const today = new Date();
-    if (year === today.getFullYear() && month === today.getMonth() && i === today.getDate()) {
+    if (
+      year === today.getFullYear() &&
+      month === today.getMonth() &&
+      i === today.getDate()
+    ) {
       dateDiv.classList.add("today");
     }
 
-    const dateString = `${year}-${String(month + 1).padStart(2, "0")}-${String(i).padStart(2, "0")}`;
+    const dateString = `${year}-${String(month + 1).padStart(2, "0")}-${String(
+      i
+    ).padStart(2, "0")}`;
 
     dateDiv.addEventListener("dragover", (e) => {
       e.preventDefault();
       dateDiv.classList.add("drag-over");
     });
-    dateDiv.addEventListener("dragleave", () => dateDiv.classList.remove("drag-over"));
+    dateDiv.addEventListener("dragleave", () =>
+      dateDiv.classList.remove("drag-over")
+    );
     dateDiv.addEventListener("drop", (e) => {
       e.preventDefault();
       dateDiv.classList.remove("drag-over");
@@ -466,7 +525,9 @@ function renderCalendar() {
       }
     });
 
-    const hasTodo = state.toDos.some((todo) => !todo.completed && todo.date === dateString);
+    const hasTodo = state.toDos.some(
+      (todo) => !todo.completed && todo.date === dateString
+    );
     if (hasTodo) {
       dateDiv.classList.add("has-todo");
       dateDiv.title = "할 일이 있습니다!";
@@ -477,7 +538,9 @@ function renderCalendar() {
       if (prevSelected) prevSelected.classList.remove("selected");
       dateDiv.classList.add("selected");
 
-      const todosForDate = state.toDos.filter((todo) => !todo.completed && todo.date === dateString);
+      const todosForDate = state.toDos.filter(
+        (todo) => !todo.completed && todo.date === dateString
+      );
       if (selectedDateTodos) {
         selectedDateTodos.innerHTML = `<h3>${month + 1}월 ${i}일 일정</h3>`;
         if (todosForDate.length > 0) {
@@ -533,11 +596,13 @@ if (prevMonthBtn && nextMonthBtn) {
     const active = total - completed;
     const withDue = state.toDos.filter((t) => t.date).length;
     const overdue = state.toDos.filter(
-      (t) => t.date && !t.completed && new Date(t.date + "T23:59:59") < new Date()
+      (t) =>
+        t.date && !t.completed && new Date(t.date + "T23:59:59") < new Date()
     ).length;
     const upcoming7 = state.toDos.filter((t) => {
       if (!t.date) return false;
-      const diff = (new Date(t.date + "T23:59:59") - new Date()) / (1000 * 60 * 60 * 24);
+      const diff =
+        (new Date(t.date + "T23:59:59") - new Date()) / (1000 * 60 * 60 * 24);
       return diff >= 0 && diff <= 7;
     }).length;
     return { total, completed, active, withDue, overdue, upcoming7 };
@@ -578,7 +643,9 @@ if (prevMonthBtn && nextMonthBtn) {
       document.body.classList.add("stats-open");
       if (showStatsBtn) showStatsBtn.style.display = "none";
       if (showTodosBtn) showTodosBtn.style.display = "inline-block";
-      try { renderStats(); } catch (e) {}
+      try {
+        renderStats();
+      } catch (e) {}
     });
     showTodosBtn.addEventListener("click", () => {
       closeStatsOverlay();
@@ -590,7 +657,7 @@ function closeStatsOverlay() {
   const statsSection = document.getElementById("stats-section");
   const showStatsBtn = document.getElementById("show-stats-btn");
   const showTodosBtn = document.getElementById("show-todos-btn");
-  
+
   if (statsSection) {
     statsSection.classList.remove("stats-overlay");
     statsSection.style.display = "none";
@@ -606,12 +673,13 @@ if (statsCloseBtn) statsCloseBtn.addEventListener("click", closeStatsOverlay);
 document.addEventListener("keydown", (e) => {
   if (e.key === "Escape") {
     const statsSection = document.getElementById("stats-section");
-    if (statsSection && statsSection.classList.contains("stats-overlay")) closeStatsOverlay();
+    if (statsSection && statsSection.classList.contains("stats-overlay"))
+      closeStatsOverlay();
   }
 });
 
 // 시작 로직
-loadToDos();    // 저장소에서 데이터 불러오기
-renderTodos();  // 화면 그리기
-renderTrash();  // 휴지통 그리기
+loadToDos(); // 저장소에서 데이터 불러오기
+renderTodos(); // 화면 그리기
+renderTrash(); // 휴지통 그리기
 renderCalendar(); // 달력 그리기
