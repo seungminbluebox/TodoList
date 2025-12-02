@@ -94,11 +94,12 @@ h1 {
   font-size: 1.08rem;
   color: #22223b;
   display: flex;
-  align-items: center;
-  justify-content: space-between;
+  flex-direction: column; /* 세로 배치 */
+  align-items: stretch;
+  justify-content: center;
   transition: box-shadow 0.2s, transform 0.2s;
   position: relative;
-  gap: 10px;
+  gap: 8px;
 }
 
 #todo-list li:last-child {
@@ -111,7 +112,6 @@ h1 {
 }
 
 #todo-list li span {
-  flex: 1;
   word-break: break-all;
 }
 
@@ -123,7 +123,6 @@ h1 {
   padding: 7px 14px;
   font-size: 0.98rem;
   cursor: pointer;
-  margin-left: 8px;
   font-weight: 500;
   transition: background 0.2s, color 0.2s;
   box-shadow: 0 1px 3px rgba(90, 110, 255, 0.04);
@@ -138,13 +137,13 @@ h1 {
   accent-color: #5b9df9;
   width: 20px;
   height: 20px;
-  margin-right: 12px;
   cursor: pointer;
   flex-shrink: 0;
 }
 
 /* 완료된 항목 스타일 */
-#todo-list li.completed span {
+#todo-list li.completed span,
+#completed-list li.completed span {
   text-decoration: line-through;
   color: #b0b0b0;
   opacity: 0.7;
@@ -176,13 +175,6 @@ h1 {
   color: #a61e4d;
 }
 
-#completed-list {
-  max-width: 440px;
-  margin: 0 auto 40px auto;
-  padding: 0;
-  list-style: none;
-}
-
 /* 메인 레이아웃 */
 .main-container {
   display: flex;
@@ -201,6 +193,8 @@ h1 {
   padding: 20px;
   box-shadow: 0 4px 20px rgba(90, 110, 255, 0.08);
   flex-shrink: 0;
+  position: sticky;
+  top: 20px;
 }
 
 .todo-wrapper {
@@ -389,7 +383,7 @@ body.dark-mode .calendar-date.has-todo {
   margin-bottom: 20px;
 }
 #completed-list {
-  max-width: 440px;
+  max-width: 520px;
   margin: 0 auto 40px auto;
   padding: 0;
   list-style: none;
@@ -405,11 +399,12 @@ body.dark-mode .calendar-date.has-todo {
   font-size: 1.08rem;
   color: #22223b;
   display: flex;
-  align-items: center;
-  justify-content: space-between;
+  flex-direction: column;
+  align-items: stretch;
+  justify-content: center;
   transition: box-shadow 0.2s, transform 0.2s;
   position: relative;
-  gap: 10px;
+  gap: 8px;
 }
 
 #completed-list li:last-child {
@@ -422,7 +417,6 @@ body.dark-mode .calendar-date.has-todo {
 }
 
 #completed-list li span {
-  flex: 1;
   word-break: break-all;
 }
 
@@ -434,7 +428,6 @@ body.dark-mode .calendar-date.has-todo {
   padding: 7px 14px;
   font-size: 0.98rem;
   cursor: pointer;
-  margin-left: 8px;
   font-weight: 500;
   transition: background 0.2s, color 0.2s;
   box-shadow: 0 1px 3px rgba(90, 110, 255, 0.04);
@@ -449,7 +442,6 @@ body.dark-mode .calendar-date.has-todo {
   accent-color: #5b9df9;
   width: 20px;
   height: 20px;
-  margin-right: 12px;
   cursor: pointer;
   flex-shrink: 0;
 }
@@ -620,7 +612,7 @@ body.dark-mode #completed-list li button:hover {
 
 /* 다크모드에서 완료된 항목 */
 body.dark-mode #todo-list li.completed span,
-body.dark_mode #completed-list li span {
+body.dark-mode #completed-list li.completed span {
   color: #666;
 }
 
@@ -1147,7 +1139,7 @@ body.dark-mode #stats-close-btn:hover {
 #todo-category {
   padding: 14px 10px;
   border: none;
-  border-radius: 8px 0 0 8px; 
+  border-radius: 8px 0 0 8px;
   background: #f8fafc;
   color: #22223b;
   font-size: 1rem;
@@ -1166,26 +1158,27 @@ body.dark-mode #stats-close-btn:hover {
   font-weight: 600;
   white-space: nowrap;
   flex-shrink: 0;
+  width: 40px;
 }
 
 /* 카테고리별 색상 지정 */
 .cat-personal {
-  background-color: #e3fae5; 
+  background-color: #e3fae5;
   color: #2b8a3e;
 }
 
 .cat-work {
-  background-color: #e7f5ff; 
+  background-color: #e7f5ff;
   color: #1c7ed6;
 }
 
 .cat-study {
-  background-color: #fff0f6; 
+  background-color: #fff0f6;
   color: #c2255c;
 }
 
 .cat-etc {
-  background-color: #f1f3f5; 
+  background-color: #f1f3f5;
   color: #495057;
 }
 
@@ -1196,10 +1189,22 @@ body.dark-mode #todo-category {
   border-right-color: #444;
 }
 
-body.dark-mode .cat-personal { background: #1b4d2e; color: #b2f2bb; }
-body.dark-mode .cat-work { background: #1864ab; color: #d0ebff; }
-body.dark-mode .cat-study { background: #a61e4d; color: #ffdeeb; }
-body.dark-mode .cat-etc { background: #343a40; color: #ced4da; }
+body.dark-mode .cat-personal {
+  background: #1b4d2e;
+  color: #b2f2bb;
+}
+body.dark-mode .cat-work {
+  background: #1864ab;
+  color: #d0ebff;
+}
+body.dark-mode .cat-study {
+  background: #a61e4d;
+  color: #ffdeeb;
+}
+body.dark-mode .cat-etc {
+  background: #343a40;
+  color: #ced4da;
+}
 
 /* =========================================
    가독성 개선 패치
@@ -1208,59 +1213,67 @@ body.dark-mode .cat-etc { background: #343a40; color: #ced4da; }
 /* 1. 버튼 숨기기 (평소엔 안 보이게) */
 #todo-list li button,
 #completed-list li button {
-  opacity: 0;                
-  width: 0;                  
-  padding: 0;                
-  margin: 0;                 
-  overflow: hidden;          
-  transition: all 0.2s ease;
+  opacity: 0;
+  transition: opacity 0.2s ease;
 }
 
 /* 마우스를 올렸을 때만 버튼 나오게 */
 #todo-list li:hover button,
 #completed-list li:hover button {
   opacity: 1;
-  width: auto;               /* 원래 너비로 복구 */
-  padding: 7px 14px;         /* 원래 패딩 복구 (기존 CSS 값 참조) */
-  margin-left: 8px;          /* 원래 마진 복구 */
 }
 
 /* 2. '할 일 텍스트' 부각 */
 /* 클래스가 없는 span(=할 일 내용)만 골라서 스타일링 */
-#todo-list li > span:not([class]), 
-#completed-list li > span:not([class]) {
-  font-size: 1.2rem;       /* 글자 크기 키움 (기존 1.0rem -> 1.2rem) */
+.todo-content > span:not([class]) {
+  font-size: 1.2rem; /* 글자 크기 키움 (기존 1.0rem -> 1.2rem) */
   font-weight: 700;
   color: #1a1a2e;
-  margin-right: 15px;      /* 오른쪽 날짜와의 간격 벌리기 */
   line-height: 1.2;
+  flex: 1;
+  word-break: break-all;
 }
 
 /* 3. 카테고리 태그: 흐리게 */
 .category-tag {
-  font-size: 0.75rem !important; /* 강제로 작게 */
-  padding: 3px 8px !important;
-  opacity: 0.85;                 /* 살짝 투명하게 */
+  font-size: 0.75rem !important;
+  width: 50px !important;
+  height: 24px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  padding: 0 !important;
   border-radius: 4px !important;
-  transform: scale(0.95);        /* 미세하게 축소 */
+  opacity: 0.85;
+  flex-shrink: 0 !important;
+  box-sizing: border-box !important;
 }
 
 /* 4. 날짜 태그: 배경 없애고 글자만 */
 .todo-date {
   font-size: 0.8rem !important;
-  color: #999 !important;        /* 연한 회색 */
+  color: #999 !important; /* 연한 회색 */
   background: transparent !important; /* 배경색 제거 */
   padding: 0 !important;
   font-weight: 400 !important;
+  margin-bottom: 4px;
+  text-align: left;
+}
+
+.todo-content {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  gap: 10px;
 }
 
 /* 날짜가 임박한 경우에만 색상 강조 유지 */
 #todo-list li span.todo-date[style*="color"] {
-    background: transparent !important;
-    font-weight: 600 !important;
+  background: transparent !important;
+  font-weight: 600 !important;
 }
 
 /* 5. 다크모드 대응 */
-body.dark-mode #todo-list li > span:not([class]) {
+body.dark-mode .todo-content > span:not([class]) {
   color: #fff; /* 다크모드에선 흰색으로 강조 */
 }
