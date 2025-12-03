@@ -611,27 +611,119 @@ if (prevMonthBtn && nextMonthBtn) {
   window.renderStats = function renderStats() {
     const statsList = document.getElementById("stats-list");
     if (!statsList) return;
+
+    // 기존 상세 목록 제거
+    const existingDetails = document.getElementById("stats-details");
+    if (existingDetails) existingDetails.remove();
+
     const s = calculateStats();
     statsList.innerHTML = "";
     const rows = [
-      ["전체 할일", s.total],
-      ["완료", s.completed],
-      ["미완료", s.active],
-      ["마감일 있는 항목", s.withDue],
-      ["마감 지난 항목", s.overdue],
-      ["앞으로 7일 내 마감", s.upcoming7],
+      { label: "전체 할일", count: s.total, filter: () => state.toDos },
+      {
+        label: "완료",
+        count: s.completed,
+        filter: () => state.toDos.filter((t) => t.completed),
+      },
+      {
+        label: "미완료",
+        count: s.active,
+        filter: () => state.toDos.filter((t) => !t.completed),
+      },
+      {
+        label: "마감일 있는 항목",
+        count: s.withDue,
+        filter: () => state.toDos.filter((t) => t.date),
+      },
+      {
+        label: "마감 지난 항목",
+        count: s.overdue,
+        filter: () =>
+          state.toDos.filter(
+            (t) =>
+              t.date &&
+              !t.completed &&
+              new Date(t.date + "T23:59:59") < new Date()
+          ),
+      },
+      {
+        label: "앞으로 7일 내 마감",
+        count: s.upcoming7,
+        filter: () =>
+          state.toDos.filter((t) => {
+            if (!t.date) return false;
+            const diff =
+              (new Date(t.date + "T23:59:59") - new Date()) /
+              (1000 * 60 * 60 * 24);
+            return diff >= 0 && diff <= 7;
+          }),
+      },
     ];
+
     rows.forEach((r) => {
       const li = document.createElement("li");
+      li.style.cursor = "pointer";
+      li.title = "클릭하여 목록 보기";
+
       const strong = document.createElement("strong");
-      strong.textContent = r[1];
+      strong.textContent = r.count;
       const span = document.createElement("span");
-      span.textContent = r[0];
+      span.textContent = r.label;
       li.appendChild(strong);
       li.appendChild(span);
+
+      li.addEventListener("click", () => {
+        // 활성화 스타일 적용
+        Array.from(statsList.children).forEach((c) =>
+          c.classList.remove("active-stat")
+        );
+        li.classList.add("active-stat");
+        showStatDetails(r.label, r.filter());
+      });
+
       statsList.appendChild(li);
     });
   };
+
+  function showStatDetails(title, todos) {
+    let detailsContainer = document.getElementById("stats-details");
+    if (!detailsContainer) {
+      detailsContainer = document.createElement("div");
+      detailsContainer.id = "stats-details";
+      detailsContainer.className = "stats-details";
+      document.querySelector(".stats-card").appendChild(detailsContainer);
+    }
+
+    detailsContainer.innerHTML = `<h3>${title} 목록 (${todos.length})</h3>`;
+
+    if (todos.length === 0) {
+      detailsContainer.innerHTML +=
+        "<p class='empty-message'>해당하는 할 일이 없습니다.</p>";
+      return;
+    }
+
+    const ul = document.createElement("ul");
+    ul.className = "stats-detail-list";
+
+    todos.forEach((todo) => {
+      const li = document.createElement("li");
+      const textSpan = document.createElement("span");
+      textSpan.textContent = todo.text;
+      if (todo.completed) {
+        textSpan.classList.add("completed-text");
+      }
+
+      const dateSpan = document.createElement("span");
+      dateSpan.textContent = todo.date ? todo.date : "";
+      dateSpan.className = "todo-date-small";
+
+      li.appendChild(textSpan);
+      li.appendChild(dateSpan);
+      ul.appendChild(li);
+    });
+
+    detailsContainer.appendChild(ul);
+  }
 
   if (showStatsBtn && showTodosBtn && statsSection && mainContainer) {
     showStatsBtn.addEventListener("click", () => {
