@@ -137,7 +137,19 @@ function paintTodo(newTodoObject, targetUl) {
   contentDiv.appendChild(editButton);
   contentDiv.appendChild(deleteButton);
 
-  span.addEventListener("click", () => handleTodoClick(newTodoObject.id));
+  // span.addEventListener("click", () => handleTodoClick(newTodoObject.id)); // 기존 span 클릭 이벤트 제거
+
+  // li 전체 클릭 시 선택 (단, 버튼이나 체크박스, textarea 클릭 시 제외)
+  li.addEventListener("click", (event) => {
+    if (
+      event.target.tagName === "BUTTON" ||
+      event.target.type === "checkbox" ||
+      event.target.tagName === "TEXTAREA"
+    ) {
+      return;
+    }
+    handleTodoClick(newTodoObject.id);
+  });
 
   if (newTodoObject.date) {
     const dateSpan = document.createElement("span");
