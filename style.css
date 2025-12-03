@@ -1305,3 +1305,110 @@ body.dark-mode .edit-textarea {
 body.dark-mode .edit-textarea:focus {
   border-color: #8ab4f8;
 }
+
+/* 통계 상세 보기 스타일 */
+#stats-list li {
+  transition: background-color 0.2s;
+  border-radius: 8px;
+  padding: 8px;
+}
+
+#stats-list li:hover {
+  background-color: #f1f3f5;
+}
+
+#stats-list li.active-stat {
+  background-color: #e0e7ff;
+  border: 1px solid #5b9df9;
+}
+
+.stats-details {
+  margin-top: 20px;
+  border-top: 1px solid #eee;
+  padding-top: 20px;
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+.stats-details h3 {
+  font-size: 1.1rem;
+  margin-bottom: 12px;
+  color: #333;
+}
+
+.stats-detail-list {
+  list-style: none;
+  padding: 0;
+  max-height: 250px;
+  overflow-y: auto;
+  border: 1px solid #eee;
+  border-radius: 8px;
+}
+
+.stats-detail-list li {
+  padding: 10px 12px;
+  border-bottom: 1px solid #f0f0f0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.95rem;
+}
+
+.stats-detail-list li:last-child {
+  border-bottom: none;
+}
+
+.stats-detail-list .completed-text {
+  text-decoration: line-through;
+  color: #aaa;
+}
+
+.stats-detail-list .todo-date-small {
+  font-size: 0.85rem;
+  color: #888;
+  background: #f8f9fa;
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+
+/* 다크모드 통계 상세 */
+body.dark-mode #stats-list li:hover {
+  background-color: #3a3a55;
+}
+
+body.dark-mode #stats-list li.active-stat {
+  background-color: #32324a;
+  border-color: #8ab4f8;
+}
+
+body.dark-mode .stats-details {
+  border-top-color: #444;
+}
+
+body.dark-mode .stats-details h3 {
+  color: #eee;
+}
+
+body.dark-mode .stats-detail-list {
+  border-color: #444;
+}
+
+body.dark-mode .stats-detail-list li {
+  border-bottom-color: #444;
+  color: #ddd;
+}
+
+body.dark-mode .stats-detail-list .todo-date-small {
+  background: #3a3a55;
+  color: #aaa;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(5px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
